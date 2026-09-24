@@ -80,6 +80,7 @@ export default function NeuralFlowCanvas() {
     let mouseY = 0;
     const handleMouseMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
       mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
       mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
     };
@@ -88,8 +89,9 @@ export default function NeuralFlowCanvas() {
 
     const handleResize = () => {
       if (!container) return;
-      const w = container.clientWidth;
+      const w = container.clientWidth || 800;
       const h = container.clientHeight || 360;
+      if (w <= 0 || h <= 0) return;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);

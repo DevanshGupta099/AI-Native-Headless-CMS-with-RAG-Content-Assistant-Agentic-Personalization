@@ -40,8 +40,8 @@ export default function VectorSpaceCanvas() {
     if (!container) return;
 
     let animationFrameId: number;
-    const width = container.clientWidth;
-    const height = container.clientHeight || 420;
+    const width = container.clientWidth || 800;
+    const height = container.clientHeight || 400;
 
     // Three.js Scene Setup
     const scene = new THREE.Scene();
@@ -165,6 +165,7 @@ export default function VectorSpaceCanvas() {
 
     const handleMouseMove = (event: MouseEvent) => {
       const rect = container.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
       const clientX = event.clientX - rect.left;
       const clientY = event.clientY - rect.top;
 
@@ -180,8 +181,9 @@ export default function VectorSpaceCanvas() {
     // Resize handler
     const handleResize = () => {
       if (!container) return;
-      const newWidth = container.clientWidth;
-      const newHeight = container.clientHeight || 420;
+      const newWidth = container.clientWidth || 800;
+      const newHeight = container.clientHeight || 400;
+      if (newWidth <= 0 || newHeight <= 0) return;
       camera.aspect = newWidth / newHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(newWidth, newHeight);

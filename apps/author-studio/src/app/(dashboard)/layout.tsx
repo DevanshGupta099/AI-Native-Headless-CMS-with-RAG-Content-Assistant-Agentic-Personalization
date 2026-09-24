@@ -26,18 +26,33 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   useEffect(() => {
     const token = localStorage.getItem('cp_token');
     if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    const storedUser = localStorage.getItem('cp_user');
-    if (storedUser) {
-      try {
-        const u = JSON.parse(storedUser);
-        setUserName(u.name || 'Lead Architect');
-        setUserRole(u.email?.includes('admin') ? 'System Admin' : 'Lead Architect');
-      } catch {
-        // ignore
+      // Auto-authenticate with pre-seeded editor account for instant interview showcase access
+      fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'editor@contentpilot.ai', password: 'Editor123!' }),
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          if (json?.data?.token) {
+            localStorage.setItem('cp_token', json.data.token);
+            localStorage.setItem('cp_user', JSON.stringify(json.data.user));
+            setUserName(json.data.user.name || 'Lead Architect');
+          }
+        })
+        .catch(() => {
+          // If backend unreachable, keep guest mode
+        });
+    } else {
+      const storedUser = localStorage.getItem('cp_user');
+      if (storedUser) {
+        try {
+          const u = JSON.parse(storedUser);
+          setUserName(u.name || 'Lead Architect');
+          setUserRole(u.email?.includes('admin') ? 'System Admin' : 'Lead Architect');
+        } catch {
+          // ignore
+        }
       }
     }
   }, [router]);
