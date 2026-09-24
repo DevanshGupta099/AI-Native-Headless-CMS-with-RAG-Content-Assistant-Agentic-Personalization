@@ -1,35 +1,54 @@
-# Design System & Styling Tokens
+# Design System & Creative Technology
 
-## Theme Variables & Tokens
+## Overview
+ContentPilot AI adopts an **Adobe Enterprise Cloud** dark-luxury design architecture (AEM + Target + Sensei GenAI). It eliminates emojis, generic templates, and AI slop in favor of:
+- **WebGL / Three.js 3D Visualizations**: Interactive real-time vector constellations and particle wave surfaces.
+- **Framer Motion Micro-Interactions**: Dynamic layout-id transitions, staggered table entries, and hover physics.
+- **Precision Lucide SVG Icons**: Crisp vector typography across all modules.
+- **Glassmorphic Surface Hierarchy**: Zinc/slate-950 canvas with hairline borders (`border-white/[0.08]`) and radial glow meshes.
 
-ContentPilot AI adheres to a dark-mode ready design token architecture inspired by modern enterprise design systems:
+---
+
+## 3D WebGL / Three.js Visual Canvases
+
+### 1. VectorSpaceCanvas (`apps/author-studio/src/components/canvas/VectorSpaceCanvas.tsx`)
+- **Technology**: Three.js WebGL Perspective Camera with fog and StandardMaterials.
+- **Purpose**: Real-time 3D projection of 384-dimensional pgvector semantic embeddings.
+- **Features**:
+  - Interactive mouse parallax & orbit camera rotation.
+  - Multi-cluster color encoding:
+    - **Indigo**: AEM Content Core
+    - **Emerald**: RAG Vector Chunks
+    - **Cyan**: Adobe Target Personalization Rules
+    - **Rose**: Autonomous Agent Publish Tools
+  - Dynamic neural similarity lines connecting close cosine distance nodes (`< 2.5` units).
+  - Raycaster ray collision detection on mouse hover displaying title, category, chunk ID, and similarity percentage.
+
+### 2. NeuralFlowCanvas (`apps/delivery-site/src/components/canvas/NeuralFlowCanvas.tsx`)
+- **Technology**: Three.js BufferGeometry with dynamic vertex wave calculation.
+- **Purpose**: Visual representation of real-time edge personalization streaming.
+- **Features**:
+  - 65x45 particle wave mesh evaluated via combined sine/cosine displacement equations.
+  - Color gradient interpolated across cyan, indigo, and purple spectrums.
+  - Parallax tilt responding to cursor movement.
+
+---
+
+## Iconography & Typography
+
+- **Zero Emojis Policy**: No emoji glyphs are permitted in platform code. All icons are rendered as accessible, semantic Lucide SVG components (`Sparkles`, `Cpu`, `Layers`, `FileText`, `Target`, `Activity`, `Database`, `ShieldCheck`, etc.).
+- **Typography Tokens**: Monospace data indicators for embedding dimensions (`384-dim`), version numbers (`v2`), and latency metrics (`14ms SLA`).
+
+---
+
+## Color Tokens & Glassmorphic Utilities
 
 ```css
-:root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --radius: 0.5rem;
-}
+/* Dark Luxury Theme */
+--background: #080b11;
+--surface-glass: rgba(13, 17, 28, 0.75);
+--surface-border: rgba(255, 255, 255, 0.08);
+--accent-indigo: #6366f1;
+--accent-cyan: #06b6d4;
+--accent-emerald: #10b981;
 ```
-
-## Typography & Components
-
-- **Typography**: Inter / Outfit sans-serif typeface hierarchy.
-- **Micro-Animations**: Framer-motion transitions for step timelines and streaming text cursors.
-- **Badges & Indicators**:
-  - `DRAFT`: Amber badge
-  - `PUBLISHED`: Emerald badge
-  - `ARCHIVED`: Slate badge
