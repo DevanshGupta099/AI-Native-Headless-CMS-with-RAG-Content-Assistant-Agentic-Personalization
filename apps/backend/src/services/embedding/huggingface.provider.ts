@@ -13,8 +13,11 @@ export class HuggingFaceEmbeddingProvider implements EmbeddingProvider {
     this.model = config.model;
   }
 
-  private getEndpoint(): string {
-    return `https://api-inference.huggingface.co/pipeline/feature-extraction/${this.model}`;
+  private getEndpoints(): string[] {
+    return [
+      `https://router.huggingface.co/hf-inference/models/${this.model}`,
+      `https://api-inference.huggingface.co/pipeline/feature-extraction/${this.model}`,
+    ];
   }
 
   async embed(text: string): Promise<number[]> {
@@ -36,19 +39,34 @@ export class HuggingFaceEmbeddingProvider implements EmbeddingProvider {
       headers.Authorization = `Bearer ${this.apiKey}`;
     }
 
-    const response = await fetch(this.getEndpoint(), {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        inputs: texts,
-        options: { wait_for_model: true },
-      }),
-    });
+    let response: Response | null = null;
+    let lastError: string | null = null;
 
-    if (!response.ok) {
-      const err = (await response.json().catch(() => ({}))) as { error?: string };
-      const msg = err?.error || `HuggingFace API returned ${response.status}`;
-      throw new AppError(`Embedding API Error: ${msg}`, response.status, 'EMBEDDING_ERROR');
+    for (const endpoint of this.getEndpoints()) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            inputs: texts,
+            options: { wait_for_model: true },
+          }),
+        });
+
+        if (res.ok) {
+          response = res;
+          break;
+        } else {
+          const err = (await res.json().catch(() => ({}))) as { error?: string };
+          lastError = err?.error || `HuggingFace returned status ${res.status}`;
+        }
+      } catch (err: any) {
+        lastError = err.message || 'Network error connecting to HuggingFace';
+      }
+    }
+
+    if (!response) {
+      throw new AppError(`Embedding API Error: ${lastError}`, 502, 'EMBEDDING_ERROR');
     }
 
     const data = (await response.json()) as number[][] | number[];
