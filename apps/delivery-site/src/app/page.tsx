@@ -52,15 +52,15 @@ export default async function DeliveryHomePage() {
   return (
     <div className="space-y-12">
       {/* 3D WebGL Hero Canvas Section */}
-      <section className="relative rounded-3xl overflow-hidden glass-card border border-white/[0.08] shadow-2xl">
+      <section className="relative rounded-3xl overflow-hidden specular-card border border-white/[0.08] shadow-2xl">
         <HeroCanvasWrapper />
 
         {/* Text Overlay on Hero */}
         <div className="absolute inset-0 z-10 p-8 sm:p-12 flex flex-col justify-between pointer-events-none">
           <div className="space-y-4 max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-mono font-semibold text-cyan-300 border border-cyan-500/30 backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 rounded-full bg-cyan-500/10 px-3.5 py-1 text-xs font-mono font-semibold text-cyan-300 border border-cyan-500/30 backdrop-blur-xl">
               <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
-              <span>AI-Native Experience Delivery Fabric</span>
+              <span>AI-NATIVE EXPERIENCE DELIVERY FABRIC</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
@@ -76,10 +76,10 @@ export default async function DeliveryHomePage() {
           <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-white/10 text-xs font-mono text-slate-300">
             <div className="flex items-center gap-2">
               <Zap className="h-3.5 w-3.5 text-cyan-400" />
-              <span>Sub-15ms Edge Resolution</span>
+              <span>Sub-15ms Edge SLA</span>
             </div>
             <div className="flex items-center gap-2">
-              <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+              <Sparkles className="h-3.5 w-3.5 text-[#ff284d]" />
               <span>384-dim Vector Grounding</span>
             </div>
             <div className="flex items-center gap-2">
@@ -94,7 +94,7 @@ export default async function DeliveryHomePage() {
       <section className="space-y-6">
         <div className="flex items-center justify-between pb-4 border-b border-white/[0.08]">
           <div className="flex items-center gap-2.5">
-            <FileText className="h-4 w-4 text-indigo-400" />
+            <FileText className="h-4 w-4 text-[#ff284d]" />
             <h2 className="text-lg font-bold text-white tracking-tight">
               Featured Published Stories
             </h2>
@@ -105,7 +105,7 @@ export default async function DeliveryHomePage() {
         </div>
 
         {items.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 p-12 text-center text-slate-500">
+          <div className="rounded-3xl specular-card border-dashed border-white/10 p-12 text-center text-slate-500">
             <FileText className="h-8 w-8 mx-auto text-slate-600 mb-2" />
             <p className="text-sm font-semibold text-slate-300">No published content available yet</p>
             <p className="mt-1 text-xs text-slate-500">
@@ -115,7 +115,7 @@ export default async function DeliveryHomePage() {
               href="http://localhost:3000"
               target="_blank"
               rel="noreferrer"
-              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow hover:bg-indigo-500 transition"
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#eb1000] px-4 py-2 text-xs font-semibold text-white shadow hover:bg-[#ff284d] transition"
             >
               <span>Open Author Studio</span>
               <ExternalLink className="h-3 w-3" />
@@ -127,15 +127,15 @@ export default async function DeliveryHomePage() {
               <Link
                 key={item.id}
                 href={`/content/${item.slug}`}
-                className="glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 group hover:-translate-y-1"
+                className="specular-card specular-card-hover rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 group"
               >
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-400">
                       {item.type.replace('_', ' ')}
                     </span>
-                    <span className="text-[10px] font-mono text-slate-500 flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
+                    <span className="text-[10px] font-mono text-slate-400 flex items-center gap-1">
+                      <Clock className="h-3 w-3 text-slate-500" />
                       <span>3 min read</span>
                     </span>
                   </div>
@@ -153,7 +153,7 @@ export default async function DeliveryHomePage() {
                       year: 'numeric',
                     })}
                   </span>
-                  <span className="inline-flex items-center gap-1 text-indigo-400 group-hover:text-cyan-300 font-semibold transition">
+                  <span className="inline-flex items-center gap-1 text-[#ff4d6d] group-hover:text-cyan-300 font-semibold transition">
                     <span>Read Story</span>
                     <ArrowUpRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition" />
                   </span>

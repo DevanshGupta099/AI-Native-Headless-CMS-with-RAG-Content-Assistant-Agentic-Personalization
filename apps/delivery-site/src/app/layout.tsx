@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Layers, ExternalLink } from 'lucide-react';
+import AtmosphericBackground from '@/components/ui/AtmosphericBackground';
 import '../styles/globals.css';
 
 export const metadata: Metadata = {
@@ -11,11 +12,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen flex flex-col bg-[#080b11] text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
-        <header className="border-b border-white/[0.08] bg-[#0b0f19]/80 backdrop-blur-xl sticky top-0 z-50">
+      <body className="min-h-screen flex flex-col bg-[#06070a] text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200 relative">
+        <AtmosphericBackground />
+
+        <header className="border-b border-white/[0.08] bg-[#090b10]/80 backdrop-blur-2xl sticky top-0 z-50">
           <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-cyan-500/20">
+              <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-[#eb1000] flex items-center justify-center text-white shadow-md shadow-cyan-500/20">
                 <Layers className="h-4 w-4" />
               </div>
               <div>
@@ -40,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 href="http://localhost:3000"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-white/[0.08] transition"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-white/[0.08] transition shadow-sm"
               >
                 <span>Author Studio</span>
                 <ExternalLink className="h-3 w-3 text-slate-400" />
@@ -49,11 +52,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </header>
 
-        <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8">
+        <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8 relative z-10">
           {children}
         </main>
 
-        <footer className="border-t border-white/[0.08] py-8 text-center text-xs text-slate-500 font-mono">
+        <footer className="border-t border-white/[0.08] py-8 text-center text-xs text-slate-500 font-mono relative z-10 bg-black/40 backdrop-blur-md">
           <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p>© 2026 ContentPilot AI • Mirrored Enterprise Consulting Stack (AEM + Target + Sensei)</p>
             <div className="flex items-center gap-2 text-[11px] text-emerald-400">
