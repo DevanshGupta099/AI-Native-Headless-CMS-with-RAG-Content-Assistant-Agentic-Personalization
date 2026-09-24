@@ -1,0 +1,193 @@
+openapi: 3.1.0
+info:
+  title: ContentPilot AI API
+  description: Comprehensive REST API specification for ContentPilot AI — AI-Native Headless CMS with RAG Content Assistant & Agentic Personalization.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001/api
+    description: Local Development Server
+
+paths:
+  /auth/login:
+    post:
+      summary: User Login
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+
+  /content:
+    post:
+      summary: Create Draft Content Item
+      tags: [Content]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, title, body]
+              properties:
+                type:
+                  type: string
+                  enum: [BLOG_POST, LANDING_PAGE, PRODUCT_PAGE]
+                title:
+                  type: string
+                body:
+                  type: object
+                meta:
+                  type: object
+      responses:
+        '201':
+          description: Content item created
+    get:
+      summary: List Content Items
+      tags: [Content]
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [DRAFT, PUBLISHED, ARCHIVED]
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [BLOG_POST, LANDING_PAGE, PRODUCT_PAGE]
+      responses:
+        '200':
+          description: List of content items
+
+  /content/{id}/publish:
+    post:
+      summary: Publish Content & Trigger Auto-Embedding
+      tags: [Content]
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Content published and queued for vector embedding
+
+  /assistant/search:
+    post:
+      summary: Semantic Search across Published Content
+      tags: [AI Assistant]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+                topK:
+                  type: integer
+                  default: 5
+      responses:
+        '200':
+          description: Ranked vector search chunks
+
+  /assistant/chat:
+    post:
+      summary: RAG-Grounded Streaming Chat Assistant
+      tags: [AI Assistant]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question]
+              properties:
+                question:
+                  type: string
+                stream:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: SSE event stream of tokens and source citations
+
+  /assistant/agent/execute:
+    post:
+      summary: Execute Agentic Multi-Step Workflow
+      tags: [AI Assistant]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [task, contentId]
+              properties:
+                task:
+                  type: string
+                  enum: [prepare_publish]
+                contentId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Structured execution checklist and step trace
+
+  /personalize/deliver:
+    get:
+      summary: Resolve Personalized Variant for Visitor
+      tags: [Personalization]
+      parameters:
+        - in: query
+          name: contentId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: sessionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Resolved variant body or fallback content
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

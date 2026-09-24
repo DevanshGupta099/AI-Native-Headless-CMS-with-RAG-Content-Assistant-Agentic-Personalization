@@ -1,0 +1,98 @@
+name: contentpilot-ai
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: contentpilot-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: contentpilot
+      POSTGRES_PASSWORD: contentpilot_dev
+      POSTGRES_DB: contentpilot
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U contentpilot -d contentpilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: contentpilot-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: contentpilot-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgresql://contentpilot:contentpilot_dev@postgres:5432/contentpilot?schema=public
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: development
+      PORT: 3001
+    env_file:
+      - ../.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../apps/backend/src:/app/apps/backend/src
+      - ../packages/shared/src:/app/packages/shared/src
+
+  author-studio:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.author-studio
+    container_name: contentpilot-author-studio
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      NODE_ENV: development
+      PORT: 3000
+    depends_on:
+      - backend
+    volumes:
+      - ../apps/author-studio/src:/app/apps/author-studio/src
+
+  delivery-site:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.delivery-site
+    container_name: contentpilot-delivery-site
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      NODE_ENV: development
+      PORT: 3002
+    depends_on:
+      - backend
+    volumes:
+      - ../apps/delivery-site/src:/app/apps/delivery-site/src
+
+volumes:
+  pgdata:
+    driver: local
+  redisdata:
+    driver: local

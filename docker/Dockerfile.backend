@@ -1,0 +1,21 @@
+FROM node:20-alpine AS base
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+# Copy monorepo configuration
+COPY pnpm-lock.yaml* pnpm-workspace.yaml turbo.json package.json tsconfig.base.json ./
+COPY packages/shared/package.json ./packages/shared/
+COPY apps/backend/package.json ./apps/backend/
+
+RUN pnpm install
+
+# Copy source
+COPY packages/shared/ ./packages/shared/
+COPY apps/backend/ ./apps/backend/
+
+RUN pnpm --filter @contentpilot/shared build
+RUN pnpm --filter @contentpilot/backend prisma generate
+
+EXPOSE 3001
+CMD ["pnpm", "--filter", "@contentpilot/backend", "dev"]

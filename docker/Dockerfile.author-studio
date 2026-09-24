@@ -1,0 +1,18 @@
+FROM node:20-alpine AS base
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+COPY pnpm-lock.yaml* pnpm-workspace.yaml turbo.json package.json tsconfig.base.json ./
+COPY packages/shared/package.json ./packages/shared/
+COPY apps/author-studio/package.json ./apps/author-studio/
+
+RUN pnpm install
+
+COPY packages/shared/ ./packages/shared/
+COPY apps/author-studio/ ./apps/author-studio/
+
+RUN pnpm --filter @contentpilot/shared build
+
+EXPOSE 3000
+CMD ["pnpm", "--filter", "@contentpilot/author-studio", "dev"]
