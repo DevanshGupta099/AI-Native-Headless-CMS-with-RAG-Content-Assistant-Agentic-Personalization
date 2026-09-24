@@ -254,12 +254,12 @@ export default function PersonalizationPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
         <div>
           <div className="flex items-center gap-2">
-            <span className="rounded-lg bg-indigo-500/20 px-2 py-0.5 text-[10px] font-mono font-semibold text-indigo-400 border border-indigo-500/30">
+            <span className="rounded-lg bg-[#eb1000]/15 px-2.5 py-0.5 text-[10px] font-mono font-bold text-[#ff4d6d] border border-[#eb1000]/30">
               ADOBE TARGET FABRIC
             </span>
             <span className="text-xs text-slate-500 font-mono">DYNAMIC EXPERIENCE RESOLVER</span>
           </div>
-          <h1 className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             Agentic Personalization Engine
           </h1>
           <p className="mt-1 text-xs sm:text-sm text-slate-400">
@@ -293,10 +293,10 @@ export default function PersonalizationPage() {
       {/* Grid: 1. Segments Management & 2. Variant Builder */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Card 1: Audience Segments */}
-        <div className="glass-panel p-6 rounded-2xl space-y-6">
+        <div className="specular-card p-6 sm:p-8 rounded-2xl space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-indigo-400" />
+              <Users className="h-4 w-4 text-[#ff4d6d]" />
               <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
                 Audience Segments ({segments.length})
               </h2>
@@ -318,7 +318,7 @@ export default function PersonalizationPage() {
                 placeholder="e.g., High-Value Search Visitors"
                 value={newSegmentName}
                 onChange={(e) => setNewSegmentName(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition"
+                className="w-full rounded-xl border border-white/10 bg-[#0c0e14] px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
                 required
               />
             </div>
@@ -329,9 +329,9 @@ export default function PersonalizationPage() {
                   type="checkbox"
                   checked={ruleIsNew}
                   onChange={(e) => setRuleIsNew(e.target.checked)}
-                  className="rounded border-white/20 bg-white/10 text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                  className="rounded border-white/20 bg-white/10 text-[#eb1000] focus:ring-[#eb1000] h-4 w-4"
                 />
-                Requires isNewVisitor
+                <span>Requires isNewVisitor</span>
               </label>
 
               <div>
@@ -343,7 +343,7 @@ export default function PersonalizationPage() {
                   placeholder="e.g. google, linkedin"
                   value={ruleReferrer}
                   onChange={(e) => setRuleReferrer(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition"
+                  className="w-full rounded-xl border border-white/10 bg-[#0c0e14] px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
                 />
               </div>
             </div>
@@ -351,7 +351,7 @@ export default function PersonalizationPage() {
             <button
               type="submit"
               disabled={isSubmittingSegment || !newSegmentName.trim()}
-              className="w-full rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition disabled:opacity-50 flex items-center justify-center gap-1.5"
+              className="btn-adobe-primary w-full rounded-xl px-4 py-2 text-xs font-semibold disabled:opacity-50 flex items-center justify-center gap-1.5"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>{isSubmittingSegment ? 'Saving...' : 'Save Audience Rule'}</span>
@@ -363,7 +363,7 @@ export default function PersonalizationPage() {
             {segments.map((seg) => (
               <div
                 key={seg.id}
-                className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] flex items-center justify-between hover:border-indigo-500/30 transition"
+                className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] flex items-center justify-between hover:border-[#eb1000]/30 transition"
               >
                 <div>
                   <h4 className="text-xs font-semibold text-white">{seg.name}</h4>
@@ -374,7 +374,7 @@ export default function PersonalizationPage() {
                       </span>
                     )}
                     {seg.ruleJson.referrerContains && (
-                      <span className="rounded-md bg-purple-500/10 text-purple-400 px-2 py-0.5 text-[10px] font-mono border border-purple-500/20">
+                      <span className="rounded-md bg-amber-500/10 text-amber-400 px-2 py-0.5 text-[10px] font-mono border border-amber-500/20">
                         referrer: &quot;{seg.ruleJson.referrerContains}&quot;
                       </span>
                     )}
@@ -392,15 +392,15 @@ export default function PersonalizationPage() {
         </div>
 
         {/* Card 2: Create Content Variant */}
-        <div className="glass-panel p-6 rounded-2xl space-y-6">
+        <div className="specular-card p-6 sm:p-8 rounded-2xl space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sliders className="h-4 w-4 text-indigo-400" />
+              <Sliders className="h-4 w-4 text-cyan-400" />
               <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
                 Create Experience Variant
               </h2>
             </div>
-            <span className="text-xs text-slate-500 font-mono">Adobe Target Variant Matrix</span>
+            <span className="text-xs text-slate-500 font-mono">Target Variant Matrix</span>
           </div>
 
           {variantSuccessMsg && (
@@ -418,7 +418,7 @@ export default function PersonalizationPage() {
               <select
                 value={selectedContentId}
                 onChange={(e) => setSelectedContentId(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-[#0f1422] px-3.5 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none transition"
+                className="w-full rounded-xl border border-white/10 bg-[#0c0e14] px-3.5 py-2 text-xs text-slate-200 focus:border-[#eb1000] focus:outline-none transition"
               >
                 {contentList.map((item) => (
                   <option key={item.id} value={item.id}>
@@ -435,7 +435,7 @@ export default function PersonalizationPage() {
               <select
                 value={selectedSegmentId}
                 onChange={(e) => setSelectedSegmentId(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-[#0f1422] px-3.5 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none transition"
+                className="w-full rounded-xl border border-white/10 bg-[#0c0e14] px-3.5 py-2 text-xs text-slate-200 focus:border-[#eb1000] focus:outline-none transition"
                 required
               >
                 <option value="">-- Select Target Audience Segment --</option>
@@ -456,7 +456,7 @@ export default function PersonalizationPage() {
                 placeholder="e.g. Welcome Architects! Build Scalable Headless Experiences"
                 value={variantHeroTitle}
                 onChange={(e) => setVariantHeroTitle(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition"
+                className="w-full rounded-xl border border-white/10 bg-[#0c0e14] px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
               />
             </div>
 
@@ -469,14 +469,14 @@ export default function PersonalizationPage() {
                 placeholder="e.g. Access Architecture Whitepaper →"
                 value={variantCtaText}
                 onChange={(e) => setVariantCtaText(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition"
+                className="w-full rounded-xl border border-white/10 bg-[#0c0e14] px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
               />
             </div>
 
             <button
               type="submit"
               disabled={isSubmittingVariant || !selectedSegmentId}
-              className="w-full rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition disabled:opacity-50 flex items-center justify-center gap-2"
+              className="btn-adobe-primary w-full rounded-xl px-4 py-2.5 text-xs font-semibold disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <Sparkles className="h-4 w-4" />
               <span>{isSubmittingVariant ? 'Publishing...' : 'Deploy Experience Variant'}</span>
@@ -486,7 +486,7 @@ export default function PersonalizationPage() {
       </div>
 
       {/* Live Edge Delivery Simulator */}
-      <div className="glass-panel p-6 rounded-2xl space-y-6">
+      <div className="specular-card p-6 sm:p-8 rounded-2xl space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
@@ -512,7 +512,7 @@ export default function PersonalizationPage() {
             <select
               value={simContentId}
               onChange={(e) => setSimContentId(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-[#0f1422] px-3.5 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-white/10 bg-[#0c0e14] px-3.5 py-2 text-xs text-slate-200 focus:border-[#eb1000] focus:outline-none transition"
             >
               {contentList.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -531,7 +531,7 @@ export default function PersonalizationPage() {
               placeholder="e.g. https://www.google.com"
               value={simReferrer}
               onChange={(e) => setSimReferrer(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition"
+              className="w-full rounded-xl border border-white/10 bg-[#0c0e14] px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
             />
           </div>
 
@@ -541,7 +541,7 @@ export default function PersonalizationPage() {
                 type="checkbox"
                 checked={simIsNew}
                 onChange={(e) => setSimIsNew(e.target.checked)}
-                className="rounded border-white/20 bg-white/10 text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                className="rounded border-white/20 bg-white/10 text-[#eb1000] focus:ring-[#eb1000] h-4 w-4"
               />
               <span>isNewVisitor</span>
             </label>
@@ -565,7 +565,7 @@ export default function PersonalizationPage() {
               <span
                 className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
                   simResult.isPersonalized
-                    ? 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+                    ? 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30'
                     : 'bg-slate-500/10 text-slate-400 border-slate-500/30'
                 }`}
               >

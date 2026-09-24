@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   Plus,
   AlertCircle,
+  Sparkles,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { ContentType, ContentItemDetail } from '@contentpilot/shared';
@@ -87,22 +88,25 @@ export default function NewContentPage() {
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Back to Content Library</span>
           </Link>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight text-white">Create New Content Asset</h1>
+          <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-white">Create New Content Asset</h1>
+          <p className="mt-1 text-xs text-slate-400">
+            Author Markdown or structured JSON ready for vectorization and edge delivery.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500 font-mono">Load Starter Template:</span>
+          <span className="text-xs text-slate-500 font-mono">Load Starter:</span>
           <button
             type="button"
             onClick={() => handleTemplate('blog')}
-            className="rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs text-slate-300 hover:bg-white/[0.08] hover:text-white transition"
+            className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/[0.08] hover:text-white transition"
           >
             RAG Article
           </button>
           <button
             type="button"
             onClick={() => handleTemplate('landing')}
-            className="rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs text-slate-300 hover:bg-white/[0.08] hover:text-white transition"
+            className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/[0.08] hover:text-white transition"
           >
             Landing Page
           </button>
@@ -116,7 +120,7 @@ export default function NewContentPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6 glass-panel p-6 rounded-2xl">
+      <form onSubmit={handleSubmit} className="space-y-6 specular-card p-6 sm:p-8 rounded-2xl">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           <div className="sm:col-span-2">
             <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
@@ -128,7 +132,7 @@ export default function NewContentPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              className="mt-1.5 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition"
+              className="mt-1.5 block w-full rounded-xl border border-white/10 bg-[#0c0e14] px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
             />
           </div>
 
@@ -139,7 +143,7 @@ export default function NewContentPage() {
             <select
               value={type}
               onChange={(e) => setType(e.target.value as ContentType)}
-              className="mt-1.5 block w-full rounded-xl border border-white/10 bg-[#0f1422] px-3.5 py-2.5 text-sm text-slate-200 focus:border-indigo-500 focus:outline-none transition"
+              className="mt-1.5 block w-full rounded-xl border border-white/10 bg-[#0c0e14] px-3.5 py-2.5 text-sm text-slate-200 focus:border-[#eb1000] focus:outline-none transition"
             >
               <option value="BLOG_POST">Blog Post</option>
               <option value="LANDING_PAGE">Landing Page</option>
@@ -149,12 +153,13 @@ export default function NewContentPage() {
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center justify-between mb-1.5">
             <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
               Content Body (Markdown)
             </label>
-            <span className="text-[11px] text-slate-500 font-mono">
-              Auto-vectorized into pgvector upon publish
+            <span className="text-[11px] text-cyan-400 font-mono flex items-center gap-1">
+              <Sparkles className="h-3 w-3" />
+              <span>Auto-vectorized into 384-dim BGE upon publish</span>
             </span>
           </div>
           <textarea
@@ -162,7 +167,7 @@ export default function NewContentPage() {
             placeholder="Write full story or Markdown copy here..."
             value={bodyText}
             onChange={(e) => setBodyText(e.target.value)}
-            className="block w-full font-mono text-xs rounded-xl border border-white/10 bg-white/[0.02] p-4 text-slate-200 placeholder-slate-600 focus:border-indigo-500 focus:outline-none transition leading-relaxed"
+            className="block w-full font-mono text-xs rounded-xl border border-white/10 bg-[#0c0e14] p-4 text-slate-200 placeholder-slate-600 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition leading-relaxed"
           />
         </div>
 
@@ -175,11 +180,11 @@ export default function NewContentPage() {
             placeholder="AI, RAG, Personalization, AEM, Architecture"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="mt-1.5 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition"
+            className="mt-1.5 block w-full rounded-xl border border-white/10 bg-[#0c0e14] px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
           />
         </div>
 
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.06]">
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.08]">
           <Link
             href="/content"
             className="rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-slate-400 hover:bg-white/[0.04] hover:text-white transition"
@@ -189,10 +194,10 @@ export default function NewContentPage() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition disabled:opacity-50"
+            className="btn-adobe-primary inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
-            <span>{loading ? 'Creating Asset...' : 'Save Draft & Edit'}</span>
+            <span>{loading ? 'Creating Asset...' : 'Save Draft & Open Editor'}</span>
           </button>
         </div>
       </form>

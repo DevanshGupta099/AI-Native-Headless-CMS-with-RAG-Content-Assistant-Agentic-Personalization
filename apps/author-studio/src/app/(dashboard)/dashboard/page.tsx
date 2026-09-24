@@ -120,14 +120,14 @@ export default function DashboardHomePage() {
         <div className="specular-card specular-card-hover p-5 rounded-2xl relative overflow-hidden group">
           <div className="flex items-center justify-between text-xs text-slate-400">
             <span className="font-mono uppercase tracking-wider text-[10px]">Dense Vector Space</span>
-            <Database className="h-4 w-4 text-[#8b5cf6]" />
+            <Database className="h-4 w-4 text-[#00e5ff]" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-3xl font-black text-white">384-d</span>
             <span className="text-xs text-emerald-400 font-mono font-medium">bge-small</span>
           </div>
           <p className="mt-2 text-[11px] text-slate-400 font-mono">pgvector cosine distance &lt;=&gt;</p>
-          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#8b5cf6] to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#00e5ff] to-transparent" />
         </div>
 
         {/* KPI 2: Precision */}
@@ -193,7 +193,7 @@ export default function DashboardHomePage() {
       {/* Architecture Quad Grid (Spectrum 2 Color Hierarchy) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="specular-card p-5 rounded-2xl space-y-3">
-          <div className="flex items-center gap-2 text-[#8b5cf6] font-semibold text-xs font-mono uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-cyan-400 font-semibold text-xs font-mono uppercase tracking-wider">
             <Layers className="h-4 w-4" />
             <span>AEM Content Core</span>
           </div>

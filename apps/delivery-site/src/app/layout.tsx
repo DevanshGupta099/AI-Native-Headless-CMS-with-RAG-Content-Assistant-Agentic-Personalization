@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="border-b border-white/[0.08] bg-[#090b10]/80 backdrop-blur-2xl sticky top-0 z-50">
           <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-[#eb1000] flex items-center justify-center text-white shadow-md shadow-cyan-500/20">
+              <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-[#00e5ff] via-[#fa383e] to-[#eb1000] flex items-center justify-center text-white shadow-md shadow-cyan-500/20">
                 <Layers className="h-4 w-4" />
               </div>
               <div>

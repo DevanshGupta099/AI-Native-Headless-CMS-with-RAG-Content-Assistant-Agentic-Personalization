@@ -82,7 +82,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div>
           {/* Logo & Brand Header */}
           <div className="flex h-16 items-center gap-3 border-b border-white/[0.08] px-6">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-[#eb1000] via-[#ff284d] to-[#7c3aed] text-white shadow-lg shadow-[#eb1000]/25">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-[#eb1000] via-[#ff284d] to-[#ff6b81] text-white shadow-lg shadow-[#eb1000]/25">
               <Layers className="h-5 w-5" />
             </div>
             <div>
@@ -113,7 +113,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     href={item.href}
                     className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-medium transition-all group relative ${
                       active
-                        ? 'bg-gradient-to-r from-[#eb1000]/15 to-[#7c3aed]/10 text-white border border-[#eb1000]/30 shadow-sm shadow-[#eb1000]/15'
+                        ? 'bg-gradient-to-r from-[#eb1000]/15 to-[#ff284d]/08 text-white border border-[#eb1000]/30 shadow-sm shadow-[#eb1000]/15'
                         : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'
                     }`}
                   >
@@ -142,15 +142,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
               <div className="space-y-2 text-[11px] text-slate-400">
                 <div className="flex items-center gap-2">
-                  <Database className="h-3.5 w-3.5 text-[#8b5cf6]" />
+                  <Database className="h-3.5 w-3.5 text-cyan-400" />
                   <span className="truncate">Neon pgvector Lake</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Cpu className="h-3.5 w-3.5 text-[#00e5ff]" />
+                  <Cpu className="h-3.5 w-3.5 text-[#ff4d6d]" />
                   <span className="truncate">Groq Llama-3.3-70B</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Shield className="h-3.5 w-3.5 text-[#ff284d]" />
+                  <Shield className="h-3.5 w-3.5 text-emerald-400" />
                   <span className="truncate">HITL Gatekeeper Active</span>
                 </div>
               </div>
@@ -161,7 +161,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* User bar & Sign-out */}
         <div className="border-t border-white/[0.08] p-4 bg-black/30 backdrop-blur-md flex items-center justify-between">
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[#eb1000]/30 to-[#7c3aed]/20 border border-[#eb1000]/30 text-[#ff4d6d] flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[#eb1000]/30 to-[#ff4d6d]/20 border border-[#eb1000]/30 text-[#ff4d6d] flex items-center justify-center font-bold text-xs shrink-0">
               {userName[0]?.toUpperCase() || 'A'}
             </div>
             <div className="truncate">

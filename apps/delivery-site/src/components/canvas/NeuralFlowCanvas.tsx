@@ -33,9 +33,9 @@ export default function NeuralFlowCanvas() {
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
 
-    const color1 = new THREE.Color(0x6366f1); // Indigo
-    const color2 = new THREE.Color(0x06b6d4); // Cyan
-    const color3 = new THREE.Color(0xa855f7); // Purple
+    const color1 = new THREE.Color(0x00e5ff); // Spectrum Cyan
+    const color2 = new THREE.Color(0xeb1000); // Adobe Crimson
+    const color3 = new THREE.Color(0xff4d6d); // Adobe Coral
 
     let index = 0;
     for (let i = 0; i < cols; i++) {

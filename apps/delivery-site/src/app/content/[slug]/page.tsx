@@ -87,7 +87,7 @@ export default async function ContentArticlePage({ params }: Props) {
 
         {content.creator && (
           <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">
-            <User className="h-3.5 w-3.5 text-indigo-400" />
+            <User className="h-3.5 w-3.5 text-cyan-400" />
             <span>Published by {content.creator.name}</span>
           </div>
         )}
@@ -103,7 +103,7 @@ export default async function ContentArticlePage({ params }: Props) {
       {/* Editorial Footer */}
       <div className="border-t border-white/[0.08] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-mono">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+          <Sparkles className="h-3.5 w-3.5 text-[#ff4d6d]" />
           <span>Delivered via ContentPilot Edge SSR • Vector Grounded</span>
         </div>
 
@@ -111,7 +111,7 @@ export default async function ContentArticlePage({ params }: Props) {
           href={`http://localhost:3000/content/${content.id}`}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-semibold transition"
+          className="inline-flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 font-semibold transition"
         >
           <span>Edit in Author Studio</span>
           <ExternalLink className="h-3.5 w-3.5" />

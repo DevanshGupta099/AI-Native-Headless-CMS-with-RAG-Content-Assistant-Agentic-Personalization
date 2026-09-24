@@ -17,6 +17,7 @@ import {
   Check,
   X,
   Copy,
+  Cpu,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { ContentItemDetail, ContentVersionSummary, AgentRun } from '@contentpilot/shared';
@@ -146,7 +147,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#eb1000] border-t-transparent" />
       </div>
     );
   }
@@ -155,7 +156,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
     return (
       <div className="p-8 text-center text-slate-500">
         <p>Content item not found in AEM Lake.</p>
-        <Link href="/content" className="mt-2 text-indigo-400 hover:underline">
+        <Link href="/content" className="mt-2 text-[#ff4d6d] hover:underline font-mono text-xs">
           Return to Library
         </Link>
       </div>
@@ -180,7 +181,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
           </div>
 
           <div className="mt-2 flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-white">{item.title}</h1>
+            <h1 className="text-2xl font-extrabold tracking-tight text-white">{item.title}</h1>
             <span
               className={`rounded-full px-2.5 py-0.5 text-xs font-semibold border ${
                 item.status === 'PUBLISHED'
@@ -200,9 +201,9 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
           <button
             onClick={handleRunAgent}
             disabled={runningAgent}
-            className="inline-flex items-center gap-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 px-3.5 py-2 text-xs font-semibold text-indigo-300 shadow-sm hover:bg-indigo-500/20 transition disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#eb1000]/10 border border-[#eb1000]/30 px-3.5 py-2 text-xs font-semibold text-[#ff4d6d] shadow-sm hover:bg-[#eb1000]/20 transition disabled:opacity-50"
           >
-            <Sparkles className="h-4 w-4 text-indigo-400" />
+            <Sparkles className="h-4 w-4 text-[#ff284d]" />
             <span>{runningAgent ? 'Running Agent Tools...' : 'Prep for Publish (AI)'}</span>
           </button>
 
@@ -229,7 +230,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
               href={`http://localhost:3002/content/${item.slug}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-slate-300 hover:bg-white/[0.08] hover:text-white transition"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-slate-300 hover:bg-white/[0.08] hover:text-cyan-300 transition"
             >
               <span>Live Preview</span>
               <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
@@ -257,11 +258,11 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
         <motion.section
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-indigo-500/30 glass-panel-glow p-6 space-y-4"
+          className="rounded-2xl border border-[#eb1000]/30 specular-card p-6 space-y-4"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-4">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 flex items-center justify-center">
+              <div className="h-9 w-9 rounded-xl bg-[#eb1000]/15 border border-[#eb1000]/30 text-[#ff4d6d] flex items-center justify-center">
                 <Bot className="h-5 w-5" />
               </div>
               <div>
@@ -276,9 +277,9 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/10 px-3 py-1 text-[11px] font-semibold text-indigo-300 border border-indigo-500/20">
-                <ShieldCheck className="h-3.5 w-3.5 text-indigo-400" />
-                <span>Human-in-the-Loop Gate Required</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-500/10 px-3 py-1 text-[11px] font-semibold text-cyan-300 border border-cyan-500/30">
+                <ShieldCheck className="h-3.5 w-3.5 text-cyan-400" />
+                <span>Human-in-the-Loop Safe</span>
               </span>
             </div>
           </div>
@@ -294,7 +295,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-indigo-400">
+                      <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-400">
                         Step {step.stepIndex + 1}: {step.toolName.replace(/_/g, ' ')}
                       </span>
                       <span className="text-[10px] text-slate-500 font-mono">{step.output.durationMs}ms</span>
@@ -314,7 +315,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                               setCopiedMeta(true);
                               setTimeout(() => setCopiedMeta(false), 2000);
                             }}
-                            className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                            className="text-[#ff4d6d] hover:text-white flex items-center gap-1 transition"
                           >
                             {copiedMeta ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                             <span>{copiedMeta ? 'Copied' : 'Copy'}</span>
@@ -356,8 +357,8 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                     {step.toolName === 'suggest_audience_segment' && data && (
                       <div className="space-y-2 text-xs">
                         <span className="font-semibold text-slate-300">Target Audience Match:</span>
-                        <div className="rounded-lg bg-indigo-500/10 p-3 border border-indigo-500/20 space-y-1">
-                          <p className="font-bold text-indigo-300 font-mono text-xs">
+                        <div className="rounded-lg bg-cyan-500/10 p-3 border border-cyan-500/20 space-y-1">
+                          <p className="font-bold text-cyan-300 font-mono text-xs">
                             {String(data.segmentName || '')}
                           </p>
                           <p className="text-[11px] text-slate-400 leading-relaxed">
@@ -386,7 +387,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Editor Area (2 columns) */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="glass-panel p-6 rounded-2xl space-y-4">
+          <div className="specular-card p-6 sm:p-8 rounded-2xl space-y-4">
             <div>
               <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
                 Asset Title
@@ -395,7 +396,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="mt-1.5 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition"
+                className="mt-1.5 block w-full rounded-xl border border-white/10 bg-[#0c0e14] px-4 py-2.5 text-sm text-white focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
               />
             </div>
 
@@ -412,17 +413,17 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                 rows={18}
                 value={bodyText}
                 onChange={(e) => setBodyText(e.target.value)}
-                className="mt-1.5 block w-full font-mono text-xs rounded-xl border border-white/10 bg-white/[0.02] p-4 text-slate-200 focus:border-indigo-500 focus:outline-none leading-relaxed transition resize-y"
+                className="mt-1.5 block w-full font-mono text-xs rounded-xl border border-white/10 bg-[#0c0e14] p-4 text-slate-200 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none leading-relaxed transition resize-y"
               />
             </div>
           </div>
         </div>
 
-        {/* Version History Sidebar (1 column) */}
+        {/* Version History & Telemetry Sidebar (1 column) */}
         <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-2xl space-y-4">
+          <div className="specular-card p-6 rounded-2xl space-y-4">
             <div className="flex items-center gap-2">
-              <History className="h-4 w-4 text-indigo-400" />
+              <History className="h-4 w-4 text-[#ff4d6d]" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-white font-mono">
                 Version History
               </h2>
@@ -446,7 +447,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                     </p>
                   </div>
                   {v.versionNo === item.currentVersion?.versionNo && (
-                    <span className="rounded-full bg-indigo-500/10 border border-indigo-500/30 px-2 py-0.5 text-[10px] font-mono font-semibold text-indigo-400">
+                    <span className="rounded-full bg-[#eb1000]/15 border border-[#eb1000]/30 px-2 py-0.5 text-[10px] font-mono font-semibold text-[#ff4d6d]">
                       Active
                     </span>
                   )}
@@ -455,9 +456,9 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
 
-          <div className="glass-panel p-6 rounded-2xl text-xs text-slate-400 space-y-2.5">
+          <div className="specular-card p-6 rounded-2xl text-xs text-slate-400 space-y-2.5">
             <div className="font-semibold text-white flex items-center gap-2 font-mono text-xs">
-              <Sparkles className="h-4 w-4 text-indigo-400" />
+              <Cpu className="h-4 w-4 text-cyan-400" />
               <span>Automated RAG Vector Indexing</span>
             </div>
             <p className="text-slate-400 leading-relaxed text-[11px]">

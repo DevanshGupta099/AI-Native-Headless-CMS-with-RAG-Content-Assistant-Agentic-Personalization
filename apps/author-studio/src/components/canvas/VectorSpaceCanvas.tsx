@@ -60,7 +60,7 @@ export default function VectorSpaceCanvas() {
     const getColor = (category: string) => {
       switch (category) {
         case 'AEM_CORE':
-          return 0x8b5cf6; // Spectrum Electric Violet
+          return 0xffb800; // Adobe Warm Amber
         case 'RAG_CHUNK':
           return 0x10b981; // Aurora Emerald
         case 'PERSONALIZATION':
@@ -266,7 +266,7 @@ export default function VectorSpaceCanvas() {
       {/* Top Right Spectrum Legend */}
       <div className="absolute top-5 right-5 z-10 flex flex-col gap-2 rounded-2xl bg-black/60 p-3.5 backdrop-blur-xl border border-white/10 text-[11px]">
         <div className="flex items-center gap-2 text-slate-300 font-medium">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#8b5cf6] shadow-[0_0_8px_#8b5cf6]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#ffb800] shadow-[0_0_8px_#ffb800]" />
           <span>AEM Content Core</span>
         </div>
         <div className="flex items-center gap-2 text-slate-300 font-medium">
