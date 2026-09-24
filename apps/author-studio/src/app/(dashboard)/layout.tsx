@@ -3,11 +3,25 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import {
+  LayoutDashboard,
+  FileText,
+  Sparkles,
+  Target,
+  Activity,
+  LogOut,
+  ExternalLink,
+  Shield,
+  Layers,
+  Database,
+  Cpu,
+} from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [userName, setUserName] = useState<string>('Editor');
+  const [userName, setUserName] = useState<string>('Lead Architect');
+  const [userRole, setUserRole] = useState<string>('Content Architect');
 
   useEffect(() => {
     const token = localStorage.getItem('cp_token');
@@ -20,7 +34,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (storedUser) {
       try {
         const u = JSON.parse(storedUser);
-        setUserName(u.name || 'Editor');
+        setUserName(u.name || 'Lead Architect');
+        setUserRole(u.email?.includes('admin') ? 'System Admin' : 'Lead Architect');
       } catch {
         // ignore
       }
@@ -34,85 +49,145 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   const navItems = [
-    { label: 'Content Items', href: '/content', icon: '📝' },
-    { label: 'AI Copilot', href: '/assistant', icon: '🤖' },
-    { label: 'Personalization', href: '/personalize', icon: '🎯' },
-    { label: 'Evaluations', href: '/eval', icon: '📊' },
+    { label: 'Command Center', href: '/dashboard', icon: LayoutDashboard },
+    { label: 'Content Studio', href: '/content', icon: FileText },
+    { label: 'RAG Copilot Studio', href: '/assistant', icon: Sparkles },
+    { label: 'Personalization Engine', href: '/personalize', icon: Target },
+    { label: 'Quality & Benchmarks', href: '/eval', icon: Activity },
   ];
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="flex min-h-screen bg-[#080b11] text-slate-100">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
+      <aside className="w-64 border-r border-white/[0.08] bg-[#0b0f19]/95 backdrop-blur-xl flex flex-col justify-between shrink-0 sticky top-0 h-screen z-40">
         <div>
-          <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-6 dark:border-slate-800">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white font-bold text-lg shadow-sm">
-              CP
+          {/* Logo & Brand Header */}
+          <div className="flex h-16 items-center gap-3 border-b border-white/[0.08] px-6">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 text-white shadow-lg shadow-indigo-500/25">
+              <Layers className="h-5 w-5" />
             </div>
             <div>
-              <span className="font-semibold text-slate-900 dark:text-white leading-none block">ContentPilot</span>
-              <span className="text-[10px] font-medium uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Author Studio</span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-bold tracking-tight text-white leading-none">ContentPilot</span>
+                <span className="rounded bg-indigo-500/20 px-1 py-0.5 text-[9px] font-mono font-semibold text-indigo-300 border border-indigo-500/30">
+                  AI
+                </span>
+              </div>
+              <span className="text-[10px] font-medium tracking-wider uppercase text-slate-400 mt-0.5 block">
+                Adobe Cloud Stack
+              </span>
             </div>
           </div>
 
-          <nav className="p-4 space-y-1">
-            {navItems.map((item) => {
-              const active = pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                    active
-                      ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300'
-                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white'
-                  }`}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+          {/* Navigation Links */}
+          <div className="p-4">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-slate-500 px-3 pb-2 font-semibold">
+              Platform Modules
+            </div>
+            <nav className="space-y-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-medium transition-all group relative ${
+                      active
+                        ? 'bg-indigo-600/20 text-white border border-indigo-500/30 shadow-sm shadow-indigo-500/10'
+                        : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'
+                    }`}
+                  >
+                    <Icon
+                      className={`h-4 w-4 transition-colors ${
+                        active ? 'text-indigo-400' : 'text-slate-400 group-hover:text-slate-200'
+                      }`}
+                    />
+                    <span>{item.label}</span>
+                    {active && (
+                      <span className="ml-auto h-1.5 w-1.5 rounded-full bg-indigo-400 shadow-sm shadow-indigo-400/80" />
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Infrastructure Quick Status */}
+            <div className="mt-8 rounded-xl border border-white/[0.06] bg-black/40 p-3 space-y-2">
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                <span>Stack Health</span>
+                <span className="text-emerald-400 font-semibold">Healthy</span>
+              </div>
+              <div className="space-y-1.5 text-[11px] text-slate-400">
+                <div className="flex items-center gap-2">
+                  <Database className="h-3 w-3 text-indigo-400" />
+                  <span className="truncate">Neon pgvector Lake</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Cpu className="h-3 w-3 text-cyan-400" />
+                  <span className="truncate">Groq Llama-3.3-70B</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Shield className="h-3 w-3 text-emerald-400" />
+                  <span className="truncate">HITL Gatekeeper Active</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* User bar at bottom */}
-        <div className="border-t border-slate-200 p-4 dark:border-slate-800 flex items-center justify-between">
+        {/* User bar & Sign-out */}
+        <div className="border-t border-white/[0.08] p-4 bg-black/20 flex items-center justify-between">
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-semibold text-xs shrink-0">
-              {userName[0]?.toUpperCase()}
+            <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-indigo-500/30 to-purple-500/20 border border-indigo-500/30 text-indigo-300 flex items-center justify-center font-bold text-xs shrink-0">
+              {userName[0]?.toUpperCase() || 'A'}
             </div>
             <div className="truncate">
-              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{userName}</p>
-              <p className="text-[10px] text-slate-500">Authenticated</p>
+              <p className="text-xs font-semibold text-slate-200 truncate">{userName}</p>
+              <div className="flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <p className="text-[10px] text-slate-400 truncate">{userRole}</p>
+              </div>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            title="Sign out"
-            className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 text-sm p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            title="Sign out of Author Studio"
+            className="text-slate-400 hover:text-rose-400 p-2 rounded-lg hover:bg-white/[0.06] transition"
           >
-            🚪
+            <LogOut className="h-4 w-4" />
           </button>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-slate-200 bg-white/80 dark:border-slate-800 dark:bg-slate-900/80 backdrop-blur px-8 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <span>Workspace</span>
-            <span>/</span>
-            <span className="font-medium text-slate-800 dark:text-slate-200 capitalize">
-              {pathname.split('/')[1] || 'Dashboard'}
+        <header className="h-16 border-b border-white/[0.08] bg-[#0b0f19]/80 backdrop-blur-xl px-8 flex items-center justify-between sticky top-0 z-30">
+          <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
+            <span>Experience Cloud</span>
+            <span className="text-slate-600">/</span>
+            <span className="text-white font-medium capitalize">
+              {pathname === '/dashboard' || pathname === '/'
+                ? 'Command Center'
+                : pathname.split('/')[1]?.replace('-', ' ')}
             </span>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              Live API Connected
-            </span>
+            <div className="hidden sm:flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400 border border-emerald-500/20">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>pgvector Lake Active</span>
+            </div>
+
+            <a
+              href="http://localhost:3002"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/[0.08] hover:text-white transition"
+            >
+              <span>Delivery Site</span>
+              <ExternalLink className="h-3 w-3 text-slate-400" />
+            </a>
           </div>
         </header>
 

@@ -2,6 +2,18 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import {
+  FileText,
+  Plus,
+  Search,
+  Filter,
+  RefreshCw,
+  ArrowUpRight,
+  Clock,
+  Archive,
+  Sparkles,
+} from 'lucide-react';
 import { api } from '@/lib/api';
 import { ContentItemSummary, ContentListResponse } from '@contentpilot/shared';
 
@@ -43,20 +55,23 @@ export default function ContentListPage() {
     switch (status) {
       case 'PUBLISHED':
         return (
-          <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-            Published
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400 border border-emerald-500/20">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span>Published</span>
           </span>
         );
       case 'ARCHIVED':
         return (
-          <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-            Archived
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-500/10 px-2.5 py-1 text-xs font-semibold text-slate-400 border border-slate-500/20">
+            <Archive className="h-3 w-3" />
+            <span>Archived</span>
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-            Draft
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-400 border border-amber-500/20">
+            <Clock className="h-3 w-3" />
+            <span>Draft</span>
           </span>
         );
     }
@@ -65,120 +80,147 @@ export default function ContentListPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Page Title & Actions */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-6 border-b border-white/[0.08]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Content Library</h1>
-          <p className="text-sm text-slate-500">Manage, version, publish, and personalize CMS items.</p>
+          <div className="flex items-center gap-2">
+            <span className="rounded-lg bg-indigo-500/20 px-2 py-0.5 text-[10px] font-mono font-semibold text-indigo-400 border border-indigo-500/30">
+              AEM ASSET LAKE
+            </span>
+            <span className="text-xs text-slate-500 font-mono">CONTENT INVENTORY</span>
+          </div>
+          <h1 className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-white">Content Library</h1>
+          <p className="mt-1 text-xs sm:text-sm text-slate-400">
+            Author, version, publish, and personalize enterprise headless CMS assets.
+          </p>
         </div>
-        <Link
-          href="/content/new"
-          className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        >
-          + Create New Content
-        </Link>
+
+        <div className="flex items-center gap-3">
+          <Link
+            href="/content/new"
+            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition focus:outline-none"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Create New Content</span>
+          </Link>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-        <div className="flex flex-wrap items-center gap-3">
-          <input
-            type="text"
-            placeholder="Search by title..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:border-indigo-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white w-64"
-          />
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl glass-panel p-4">
+        <div className="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search content by title..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-white/[0.03] pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition"
+            />
+          </div>
 
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:border-indigo-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-          >
-            <option value="">All Content Types</option>
-            <option value="BLOG_POST">Blog Post</option>
-            <option value="LANDING_PAGE">Landing Page</option>
-            <option value="PRODUCT_PAGE">Product Page</option>
-          </select>
+          <div className="flex items-center gap-2">
+            <Filter className="h-3.5 w-3.5 text-slate-500" />
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="rounded-xl border border-white/10 bg-[#0f1422] px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none"
+            >
+              <option value="">All Content Types</option>
+              <option value="BLOG_POST">Blog Post</option>
+              <option value="LANDING_PAGE">Landing Page</option>
+              <option value="PRODUCT_PAGE">Product Page</option>
+            </select>
 
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:border-indigo-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-          >
-            <option value="">Active (Draft & Published)</option>
-            <option value="DRAFT">Draft</option>
-            <option value="PUBLISHED">Published</option>
-            <option value="ARCHIVED">Archived</option>
-          </select>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="rounded-xl border border-white/10 bg-[#0f1422] px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none"
+            >
+              <option value="">All Statuses</option>
+              <option value="DRAFT">Draft</option>
+              <option value="PUBLISHED">Published</option>
+              <option value="ARCHIVED">Archived</option>
+            </select>
+          </div>
         </div>
 
         <button
           onClick={() => fetchContent()}
-          className="text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition px-3 py-2 rounded-xl hover:bg-white/[0.04]"
         >
-          🔄 Refresh
+          <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+          <span>Refresh</span>
         </button>
       </div>
 
       {/* Error state */}
       {error && (
-        <div className="rounded-lg bg-rose-50 p-4 text-sm text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200">
+        <div className="rounded-xl bg-rose-500/10 p-4 text-xs font-medium text-rose-400 border border-rose-500/20">
           {error}
         </div>
       )}
 
       {/* Content Table */}
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800 text-left">
-          <thead className="bg-slate-50 dark:bg-slate-800/50 text-xs uppercase tracking-wider text-slate-500 font-semibold">
+      <div className="overflow-hidden rounded-2xl glass-panel shadow-sm">
+        <table className="min-w-full divide-y divide-white/[0.06] text-left">
+          <thead className="bg-white/[0.02] text-[11px] font-mono uppercase tracking-wider text-slate-400">
             <tr>
-              <th className="px-6 py-3.5">Title & Slug</th>
-              <th className="px-6 py-3.5">Type</th>
-              <th className="px-6 py-3.5">Status</th>
-              <th className="px-6 py-3.5">Last Updated</th>
-              <th className="px-6 py-3.5 text-right">Actions</th>
+              <th className="px-6 py-4">Title & Slug</th>
+              <th className="px-6 py-4">Content Type</th>
+              <th className="px-6 py-4">Publication State</th>
+              <th className="px-6 py-4">Last Updated</th>
+              <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
+          <tbody className="divide-y divide-white/[0.06] text-xs">
             {loading ? (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
-                  <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent"></div>
-                  <p className="mt-2 text-xs">Loading content...</p>
+                <td colSpan={5} className="px-6 py-16 text-center text-slate-500">
+                  <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+                  <p className="mt-3 text-xs font-mono">Querying AEM Content Lake...</p>
                 </td>
               </tr>
             ) : items.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
-                  <p className="text-base font-semibold text-slate-700 dark:text-slate-300">No content items found</p>
+                <td colSpan={5} className="px-6 py-16 text-center text-slate-500">
+                  <FileText className="h-8 w-8 mx-auto text-slate-600 mb-2" />
+                  <p className="text-sm font-semibold text-slate-300">No content items found</p>
                   <p className="mt-1 text-xs text-slate-500">Create your first blog post or landing page to get started.</p>
                   <Link
                     href="/content/new"
-                    className="mt-4 inline-flex items-center rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-indigo-700 transition"
+                    className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow hover:bg-indigo-500 transition"
                   >
-                    + Create First Item
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Create First Item</span>
                   </Link>
                 </td>
               </tr>
             ) : (
-              items.map((item) => (
-                <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+              items.map((item, idx) => (
+                <motion.tr
+                  key={item.id}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.03 }}
+                  className="hover:bg-white/[0.02] transition group"
+                >
                   <td className="px-6 py-4">
                     <Link
                       href={`/content/${item.id}`}
-                      className="font-semibold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 block"
+                      className="font-semibold text-white group-hover:text-indigo-400 transition block text-sm"
                     >
                       {item.title}
                     </Link>
-                    <span className="text-xs text-slate-500">/{item.slug}</span>
+                    <span className="text-[11px] font-mono text-slate-500">/{item.slug}</span>
                   </td>
-                  <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
-                    <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs font-medium">
+                  <td className="px-6 py-4">
+                    <span className="rounded-lg bg-white/[0.04] border border-white/[0.06] px-2.5 py-1 text-[11px] font-mono text-slate-300">
                       {item.type.replace('_', ' ')}
                     </span>
                   </td>
                   <td className="px-6 py-4">{getStatusBadge(item.status)}</td>
-                  <td className="px-6 py-4 text-xs text-slate-500">
+                  <td className="px-6 py-4 text-[11px] font-mono text-slate-400">
                     {new Date(item.updatedAt).toLocaleDateString(undefined, {
                       year: 'numeric',
                       month: 'short',
@@ -186,14 +228,28 @@ export default function ContentListPage() {
                     })}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <Link
-                      href={`/content/${item.id}`}
-                      className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 hover:underline"
-                    >
-                      Edit & Prep →
-                    </Link>
+                    <div className="flex items-center justify-end gap-2">
+                      <Link
+                        href={`/content/${item.id}`}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-indigo-300 hover:bg-indigo-600 hover:text-white transition"
+                      >
+                        <Sparkles className="h-3 w-3" />
+                        <span>Edit & AI Prep</span>
+                      </Link>
+                      {item.status === 'PUBLISHED' && (
+                        <a
+                          href={`http://localhost:3002/content/${item.slug}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="View on Delivery Site"
+                          className="p-1.5 rounded-lg border border-white/10 hover:bg-white/[0.06] text-slate-400 hover:text-white transition"
+                        >
+                          <ArrowUpRight className="h-3.5 w-3.5" />
+                        </a>
+                      )}
+                    </div>
                   </td>
-                </tr>
+                </motion.tr>
               ))
             )}
           </tbody>

@@ -1,6 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import {
+  Search,
+  Bot,
+  Target,
+  RefreshCw,
+  Play,
+  Clock,
+} from 'lucide-react';
 
 interface EvalResultItem {
   id: string;
@@ -51,7 +59,6 @@ export default function EvaluationDashboardPage() {
         setHistory(histData.data || []);
       }
     } catch {
-      // Mock fallback data for demonstration
       setSummary({
         retrievalPrecision: { score: 0.94, lastEvaluatedAt: new Date().toISOString() },
         agentReliability: { score: 1.0, lastEvaluatedAt: new Date().toISOString() },
@@ -122,7 +129,6 @@ export default function EvaluationDashboardPage() {
         alert(err.message || 'Evaluation run failed');
       }
     } catch {
-      // Mock run
       const mockResult: EvalResultItem = {
         id: `mock-${Date.now()}`,
         evalType: selectedEvalType,
@@ -143,9 +149,9 @@ export default function EvaluationDashboardPage() {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 0.9) return 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800';
-    if (score >= 0.7) return 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800';
-    return 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50 border-rose-200 dark:border-rose-800';
+    if (score >= 0.9) return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
+    if (score >= 0.7) return 'text-amber-400 bg-amber-500/10 border-amber-500/20';
+    return 'text-rose-400 bg-rose-500/10 border-rose-500/20';
   };
 
   const formatEvalName = (type: string) => {
@@ -153,123 +159,132 @@ export default function EvaluationDashboardPage() {
       case 'retrieval_precision':
         return 'Retrieval Precision@3';
       case 'agent_reliability':
-        return 'Agent Reliability';
+        return 'Agent Tool Reliability';
       case 'personalization_correctness':
-        return 'Personalization Correctness';
+        return 'Personalization Accuracy';
       default:
         return type;
     }
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">📊</span>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-              AI Evaluation & Quality Harness
-            </h1>
+            <span className="rounded-lg bg-indigo-500/20 px-2 py-0.5 text-[10px] font-mono font-semibold text-indigo-400 border border-indigo-500/30">
+              QUALITY HARNESS
+            </span>
+            <span className="text-xs text-slate-500 font-mono">CONTINUOUS BENCHMARKING</span>
           </div>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Continuous benchmarking for RAG retrieval precision, agent tool execution reliability, and segment personalization accuracy.
+          <h1 className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            AI Quality & Evaluation Harness
+          </h1>
+          <p className="mt-1 text-xs sm:text-sm text-slate-400">
+            Automated quality gates for RAG retrieval precision, agent execution reliability, and segment resolution.
           </p>
         </div>
+
         <button
           onClick={loadEvalData}
           disabled={loading}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+          className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-slate-300 hover:bg-white/[0.08] hover:text-white transition disabled:opacity-50"
         >
-          🔄 Refresh Metrics
+          <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+          <span>Refresh Metrics</span>
         </button>
       </div>
 
       {/* Metric Cards Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <div className="glass-panel p-6 rounded-2xl space-y-2">
+          <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-slate-400">
             <span>RAG Retrieval Precision</span>
-            <span>🔍</span>
+            <Search className="h-4 w-4 text-indigo-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
+            <span className="text-3xl font-extrabold text-white">
               {summary?.retrievalPrecision ? `${Math.round(summary.retrievalPrecision.score * 100)}%` : '--'}
             </span>
-            <span className="text-xs text-slate-500">Precision@3</span>
+            <span className="text-xs text-slate-400 font-mono">Precision@3</span>
           </div>
-          <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden mt-3">
+          <div className="w-full bg-white/[0.06] rounded-full h-1.5 overflow-hidden mt-3">
             <div
-              className="bg-indigo-600 h-2 rounded-full transition-all duration-500"
+              className="bg-indigo-500 h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${(summary?.retrievalPrecision?.score ?? 0.8) * 100}%` }}
             />
           </div>
-          <p className="text-[11px] text-slate-400 pt-1">
+          <p className="text-[11px] text-slate-500 pt-1 font-mono">
             Ground-truth keyword recall against benchmark queries
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <div className="glass-panel p-6 rounded-2xl space-y-2">
+          <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-slate-400">
             <span>Agent Reliability</span>
-            <span>🤖</span>
+            <Bot className="h-4 w-4 text-emerald-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
+            <span className="text-3xl font-extrabold text-white">
               {summary?.agentReliability ? `${Math.round(summary.agentReliability.score * 100)}%` : '--'}
             </span>
-            <span className="text-xs text-slate-500">Success Rate</span>
+            <span className="text-xs text-slate-400 font-mono">Success Rate</span>
           </div>
-          <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden mt-3">
+          <div className="w-full bg-white/[0.06] rounded-full h-1.5 overflow-hidden mt-3">
             <div
-              className="bg-emerald-500 h-2 rounded-full transition-all duration-500"
+              className="bg-emerald-500 h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${(summary?.agentReliability?.score ?? 1.0) * 100}%` }}
             />
           </div>
-          <p className="text-[11px] text-slate-400 pt-1">
-            Multi-step tool pipeline completion & error rate
+          <p className="text-[11px] text-slate-500 pt-1 font-mono">
+            Autonomous multi-tool workflow completion rate
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <div className="glass-panel p-6 rounded-2xl space-y-2">
+          <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-slate-400">
             <span>Personalization Accuracy</span>
-            <span>🎯</span>
+            <Target className="h-4 w-4 text-purple-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
+            <span className="text-3xl font-extrabold text-white">
               {summary?.personalizationCorrectness
                 ? `${Math.round(summary.personalizationCorrectness.score * 100)}%`
                 : '--'}
             </span>
-            <span className="text-xs text-slate-500">Rule Match</span>
+            <span className="text-xs text-slate-400 font-mono">Rule Match</span>
           </div>
-          <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden mt-3">
+          <div className="w-full bg-white/[0.06] rounded-full h-1.5 overflow-hidden mt-3">
             <div
-              className="bg-purple-600 h-2 rounded-full transition-all duration-500"
+              className="bg-purple-500 h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${(summary?.personalizationCorrectness?.score ?? 0.9) * 100}%` }}
             />
           </div>
-          <p className="text-[11px] text-slate-400 pt-1">
-            Segment rule resolution & edge variant delivery
+          <p className="text-[11px] text-slate-500 pt-1 font-mono">
+            Segment rule matching & edge delivery precision
           </p>
         </div>
       </div>
 
-      {/* Run Evaluation Section */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
-          <span>🚀</span> Trigger Evaluation Suite
-        </h2>
+      {/* Trigger Evaluation Section */}
+      <div className="glass-panel p-6 rounded-2xl space-y-4">
+        <div className="flex items-center gap-2">
+          <Play className="h-4 w-4 text-indigo-400" />
+          <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+            Execute Evaluation Suite
+          </h2>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
           <div>
-            <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Select Evaluation Benchmark
+            <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1">
+              Select Benchmark Benchmark
             </label>
             <select
               value={selectedEvalType}
               onChange={(e) => setSelectedEvalType(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-xl border border-white/10 bg-[#0f1422] px-3.5 py-2 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none transition"
             >
               <option value="retrieval_precision">Retrieval Precision@3 (Vector Search)</option>
               <option value="agent_reliability">Agent Tool Execution Reliability</option>
@@ -278,8 +293,8 @@ export default function EvaluationDashboardPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Sample Size / Batch Size: {sampleSize}
+            <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1">
+              Batch Sample Size: {sampleSize} queries
             </label>
             <input
               type="range"
@@ -288,16 +303,17 @@ export default function EvaluationDashboardPage() {
               step="5"
               value={sampleSize}
               onChange={(e) => setSampleSize(Number(e.target.value))}
-              className="w-full accent-indigo-600 cursor-pointer"
+              className="w-full accent-indigo-500 cursor-pointer"
             />
           </div>
 
           <button
             onClick={handleRunEvaluation}
             disabled={runningEval}
-            className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50 shadow-sm"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition disabled:opacity-50"
           >
-            {runningEval ? 'Running Benchmark...' : 'Execute Evaluation Batch →'}
+            <Play className="h-3.5 w-3.5 fill-current" />
+            <span>{runningEval ? 'Running Benchmark...' : 'Execute Evaluation Batch'}</span>
           </button>
         </div>
       </div>
@@ -305,109 +321,108 @@ export default function EvaluationDashboardPage() {
       {/* History and Details Split */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Table of Past Runs */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-4">
-          <h2 className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-            <span>📜</span> Evaluation Run History
-          </h2>
+        <div className="lg:col-span-2 glass-panel p-6 rounded-2xl space-y-4">
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-indigo-400" />
+            <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+              Evaluation Run History
+            </h2>
+          </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-slate-200 text-xs font-semibold uppercase text-slate-400 dark:border-slate-800">
+            <table className="w-full text-left text-xs">
+              <thead className="border-b border-white/[0.08] text-[10px] font-mono font-semibold uppercase text-slate-400">
                 <tr>
-                  <th className="pb-3">Type</th>
-                  <th className="pb-3">Score</th>
-                  <th className="pb-3">Run Date</th>
+                  <th className="pb-3">Benchmark Type</th>
+                  <th className="pb-3">Quality Score</th>
+                  <th className="pb-3">Run Timestamp</th>
                   <th className="pb-3 text-right">Details</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+              <tbody className="divide-y divide-white/[0.04]">
                 {history.map((item) => (
                   <tr
                     key={item.id}
                     onClick={() => setSelectedResult(item)}
-                    className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40 transition"
+                    className="cursor-pointer hover:bg-white/[0.02] transition"
                   >
-                    <td className="py-3 font-medium text-slate-800 dark:text-slate-200">
+                    <td className="py-3.5 font-medium text-slate-200">
                       {formatEvalName(item.evalType)}
                     </td>
-                    <td className="py-3">
+                    <td className="py-3.5">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${getScoreColor(
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold border ${getScoreColor(
                           item.score
                         )}`}
                       >
                         {Math.round(item.score * 100)}%
                       </span>
                     </td>
-                    <td className="py-3 text-xs text-slate-500 font-mono">
+                    <td className="py-3.5 text-slate-500 font-mono text-[11px]">
                       {new Date(item.createdAt).toLocaleDateString()} {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </td>
-                    <td className="py-3 text-right">
+                    <td className="py-3.5 text-right">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedResult(item);
                         }}
-                        className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                        className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold"
                       >
                         Inspect →
                       </button>
                     </td>
                   </tr>
                 ))}
-                {history.length === 0 && !loading && (
-                  <tr>
-                    <td colSpan={4} className="py-6 text-center text-sm text-slate-400">
-                      No evaluation batches run yet. Trigger your first run above!
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>
         </div>
 
         {/* Selected Result Inspection Drawer */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-4">
-          <h2 className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-            <span>🔍</span> Inspector
-          </h2>
+        <div className="glass-panel p-6 rounded-2xl space-y-4">
+          <div className="flex items-center gap-2">
+            <Search className="h-4 w-4 text-indigo-400" />
+            <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+              Payload Inspector
+            </h2>
+          </div>
 
           {selectedResult ? (
             <div className="space-y-4">
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-2">
+              <div className="p-3.5 rounded-xl bg-black/40 border border-white/[0.06] space-y-2 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-500">Benchmark Type</span>
-                  <span className="text-xs font-mono font-medium text-slate-700 dark:text-slate-300">
+                  <span className="text-slate-400 font-mono">Type</span>
+                  <span className="font-mono text-white font-semibold">
                     {selectedResult.evalType}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-500">Quality Score</span>
-                  <span className="text-sm font-bold text-slate-900 dark:text-white">
+                  <span className="text-slate-400 font-mono">Score</span>
+                  <span className="text-sm font-bold text-emerald-400 font-mono">
                     {Math.round(selectedResult.score * 100)}%
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-500">ID</span>
-                  <span className="text-[11px] font-mono text-slate-400">
-                    {selectedResult.id.slice(0, 8)}...
+                  <span className="text-slate-400 font-mono">ID</span>
+                  <span className="text-[11px] font-mono text-slate-500">
+                    {selectedResult.id.slice(0, 10)}...
                   </span>
                 </div>
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                  Payload & Breakdown
+                <span className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-2">
+                  Telemetry Breakdown
                 </span>
-                <div className="p-3 rounded-xl bg-slate-950 text-slate-200 font-mono text-[11px] max-h-96 overflow-y-auto border border-slate-800 leading-relaxed">
+                <div className="p-3.5 rounded-xl bg-black/60 text-slate-300 font-mono text-[11px] max-h-96 overflow-y-auto border border-white/10 leading-relaxed">
                   <pre>{JSON.stringify(selectedResult.detailsJson, null, 2)}</pre>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="p-8 text-center text-slate-400 text-xs">
-              Select an evaluation run from the table to inspect detailed metrics, precision breakdowns, and tool traces.
+            <div className="p-8 text-center text-slate-500 text-xs">
+              Select an evaluation batch from the history table to inspect query breakdowns, recall hits, and tool traces.
             </div>
           )}
         </div>

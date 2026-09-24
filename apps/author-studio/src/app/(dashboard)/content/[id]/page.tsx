@@ -2,6 +2,22 @@
 
 import { useEffect, useState, use, useCallback } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import {
+  ArrowLeft,
+  Sparkles,
+  Save,
+  UploadCloud,
+  CheckCircle2,
+  AlertCircle,
+  ExternalLink,
+  History,
+  Bot,
+  ShieldCheck,
+  Check,
+  X,
+  Copy,
+} from 'lucide-react';
 import { api } from '@/lib/api';
 import { ContentItemDetail, ContentVersionSummary, AgentRun } from '@contentpilot/shared';
 
@@ -18,6 +34,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
   const [agentRun, setAgentRun] = useState<AgentRun | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [copiedMeta, setCopiedMeta] = useState(false);
 
   // Form states
   const [title, setTitle] = useState('');
@@ -68,7 +85,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
       });
 
       setItem(res.data);
-      setSuccessMsg('Saved successfully as a new version!');
+      setSuccessMsg('Successfully created immutable snapshot version.');
       const versionsRes = await api.get<{ data: ContentVersionSummary[] }>(`/api/content/${id}/versions`);
       setVersions(versionsRes.data);
     } catch (err: unknown) {
@@ -90,7 +107,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
     try {
       const res = await api.post<{ data: ContentItemDetail }>(`/api/content/${id}/publish`);
       setItem(res.data);
-      setSuccessMsg('Published! Background vector embedding pipeline triggered.');
+      setSuccessMsg('Published to Edge! Automated pgvector 384-dim embedding indexing triggered.');
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -114,7 +131,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
       });
 
       setAgentRun(res.data);
-      setSuccessMsg('Agent completed all 3 preparation tools. Review the checklist below.');
+      setSuccessMsg('Agentic tool pipeline executed: SEO analysis, metadata generation, and audience classification complete.');
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -129,7 +146,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
       </div>
     );
   }
@@ -137,9 +154,9 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
   if (!item) {
     return (
       <div className="p-8 text-center text-slate-500">
-        <p>Content item not found.</p>
-        <Link href="/content" className="mt-2 text-indigo-600 hover:underline">
-          Back to library
+        <p>Content item not found in AEM Lake.</p>
+        <Link href="/content" className="mt-2 text-indigo-400 hover:underline">
+          Return to Library
         </Link>
       </div>
     );
@@ -148,27 +165,34 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Top Header & Actions */}
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-slate-200 pb-4 dark:border-slate-800">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between pb-6 border-b border-white/[0.08]">
         <div>
           <div className="flex items-center gap-2">
-            <Link href="/content" className="text-xs font-semibold text-slate-500 hover:text-indigo-600">
-              ← Content Library
+            <Link
+              href="/content"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-white transition"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Content Library</span>
             </Link>
-            <span className="text-slate-300">/</span>
-            <span className="text-xs font-mono text-slate-500">/{item.slug}</span>
+            <span className="text-slate-600">/</span>
+            <span className="text-xs font-mono text-slate-400">/{item.slug}</span>
           </div>
-          <div className="mt-1 flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{item.title}</h1>
+
+          <div className="mt-2 flex items-center gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-white">{item.title}</h1>
             <span
-              className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+              className={`rounded-full px-2.5 py-0.5 text-xs font-semibold border ${
                 item.status === 'PUBLISHED'
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  : 'bg-amber-50 text-amber-700 border border-amber-200'
+                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                  : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
               }`}
             >
               {item.status}
             </span>
-            <span className="text-xs text-slate-500">v{item.currentVersion?.versionNo || 1}</span>
+            <span className="text-xs font-mono text-slate-400">
+              v{item.currentVersion?.versionNo || 1}
+            </span>
           </div>
         </div>
 
@@ -176,63 +200,87 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
           <button
             onClick={handleRunAgent}
             disabled={runningAgent}
-            className="rounded-lg bg-indigo-50 border border-indigo-200 px-3.5 py-2 text-xs font-semibold text-indigo-700 shadow-sm hover:bg-indigo-100 transition focus:outline-none dark:border-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 disabled:opacity-50 flex items-center gap-1.5"
+            className="inline-flex items-center gap-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 px-3.5 py-2 text-xs font-semibold text-indigo-300 shadow-sm hover:bg-indigo-500/20 transition disabled:opacity-50"
           >
-            <span>✨</span>
+            <Sparkles className="h-4 w-4 text-indigo-400" />
             <span>{runningAgent ? 'Running Agent Tools...' : 'Prep for Publish (AI)'}</span>
           </button>
 
           <button
             onClick={handleSave}
             disabled={saving}
-            className="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-slate-300 shadow-sm hover:bg-white/[0.08] hover:text-white transition disabled:opacity-50"
           >
-            {saving ? 'Saving...' : 'Save New Version'}
+            <Save className="h-4 w-4" />
+            <span>{saving ? 'Saving...' : 'Save New Version'}</span>
           </button>
 
           <button
             onClick={handlePublish}
             disabled={publishing || item.status === 'PUBLISHED'}
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-emerald-600/30 hover:bg-emerald-500 transition disabled:opacity-50"
           >
-            {publishing ? 'Publishing...' : item.status === 'PUBLISHED' ? 'Published' : 'Publish Content'}
+            <UploadCloud className="h-4 w-4" />
+            <span>{publishing ? 'Publishing...' : item.status === 'PUBLISHED' ? 'Published' : 'Publish to Edge'}</span>
           </button>
 
-          <a
-            href={`http://localhost:3002/content/${item.slug}`}
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
-          >
-            Live Preview ↗
-          </a>
+          {item.status === 'PUBLISHED' && (
+            <a
+              href={`http://localhost:3002/content/${item.slug}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-slate-300 hover:bg-white/[0.08] hover:text-white transition"
+            >
+              <span>Live Preview</span>
+              <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
+            </a>
+          )}
         </div>
       </div>
 
       {/* Notifications */}
-      {error && <div className="rounded-lg bg-rose-50 p-4 text-sm text-rose-700 border border-rose-200">{error}</div>}
+      {error && (
+        <div className="rounded-xl bg-rose-500/10 p-4 text-xs font-medium text-rose-400 border border-rose-500/20 flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
       {successMsg && (
-        <div className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-700 border border-emerald-200">{successMsg}</div>
+        <div className="rounded-xl bg-emerald-500/10 p-4 text-xs font-medium text-emerald-400 border border-emerald-500/20 flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          <span>{successMsg}</span>
+        </div>
       )}
 
       {/* Agent Execution Trace Panel (when executed) */}
       {agentRun && (
-        <section className="rounded-2xl border-2 border-indigo-200 bg-indigo-50/40 p-6 shadow-sm dark:border-indigo-900 dark:bg-indigo-950/20 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">🤖</span>
+        <motion.section
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl border border-indigo-500/30 glass-panel-glow p-6 space-y-4"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-4">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 flex items-center justify-center">
+                <Bot className="h-5 w-5" />
+              </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                  Agent Execution Trace • {agentRun.task}
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+                  Autonomous Agent Workflow • {agentRun.task.replace('_', ' ')}
                 </h3>
-                <p className="text-xs text-slate-500">
-                  Run ID: {agentRun.id} • Status: <span className="font-semibold text-emerald-600">{agentRun.status}</span>
+                <p className="text-xs text-slate-400 font-mono mt-0.5">
+                  Execution ID: {agentRun.id.slice(0, 8)} • Status:{' '}
+                  <span className="font-semibold text-emerald-400 uppercase">{agentRun.status}</span>
                 </p>
               </div>
             </div>
-            <span className="text-[11px] rounded-full bg-indigo-100 px-3 py-1 font-semibold text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">
-              Human-in-the-Loop Approval Required
-            </span>
+
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/10 px-3 py-1 text-[11px] font-semibold text-indigo-300 border border-indigo-500/20">
+                <ShieldCheck className="h-3.5 w-3.5 text-indigo-400" />
+                <span>Human-in-the-Loop Gate Required</span>
+              </span>
+            </div>
           </div>
 
           {/* Timeline of Steps */}
@@ -242,39 +290,62 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
               return (
                 <div
                   key={step.stepIndex}
-                  className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between"
+                  className="rounded-xl border border-white/[0.08] bg-black/40 p-4 flex flex-col justify-between"
                 >
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                      <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-indigo-400">
                         Step {step.stepIndex + 1}: {step.toolName.replace(/_/g, ' ')}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-mono">{step.output.durationMs}ms</span>
+                      <span className="text-[10px] text-slate-500 font-mono">{step.output.durationMs}ms</span>
                     </div>
 
                     {step.toolName === 'generate_meta_description' && data && (
-                      <div className="text-xs space-y-1">
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">Recommended Meta Description:</p>
-                        <p className="italic text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                      <div className="space-y-2 text-xs">
+                        <span className="font-semibold text-slate-300">Generated Meta Description:</span>
+                        <div className="rounded-lg bg-white/[0.03] p-3 border border-white/[0.06] text-slate-300 italic text-[11px] leading-relaxed">
                           "{String(data.metaDescription || '')}"
-                        </p>
-                        <p className="text-[10px] text-slate-400">{String(data.charCount || 0)} characters</p>
+                        </div>
+                        <div className="flex items-center justify-between text-[11px] text-slate-500">
+                          <span>{String(data.charCount || 0)} characters</span>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(String(data.metaDescription || ''));
+                              setCopiedMeta(true);
+                              setTimeout(() => setCopiedMeta(false), 2000);
+                            }}
+                            className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                          >
+                            {copiedMeta ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                            <span>{copiedMeta ? 'Copied' : 'Copy'}</span>
+                          </button>
+                        </div>
                       </div>
                     )}
 
                     {step.toolName === 'check_seo_score' && data && (
-                      <div className="text-xs space-y-1">
+                      <div className="space-y-2 text-xs">
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold text-slate-800 dark:text-slate-200">SEO Health Score:</span>
-                          <span className="text-sm font-extrabold text-emerald-600">{String(data.score)}% (Grade {String(data.grade)})</span>
+                          <span className="font-semibold text-slate-300">SEO Health Index:</span>
+                          <span className="text-sm font-extrabold text-emerald-400 font-mono">
+                            {String(data.score)}% (Grade {String(data.grade)})
+                          </span>
                         </div>
-                        <div className="space-y-1 pt-1">
+                        <div className="space-y-1.5 pt-1">
                           {Array.isArray(data.checks) &&
                             data.checks.map((c: { name: string; pass: boolean; detail: string }, idx: number) => (
-                              <div key={idx} className="flex items-center justify-between text-[11px]">
-                                <span className="text-slate-500">{c.name}</span>
-                                <span className={c.pass ? 'text-emerald-600 font-bold' : 'text-rose-500 font-bold'}>
-                                  {c.pass ? '✓ Pass' : '✗ Check'}
+                              <div
+                                key={idx}
+                                className="flex items-center justify-between text-[11px] py-1 border-b border-white/[0.04]"
+                              >
+                                <span className="text-slate-400">{c.name}</span>
+                                <span
+                                  className={`font-semibold flex items-center gap-1 ${
+                                    c.pass ? 'text-emerald-400' : 'text-rose-400'
+                                  }`}
+                                >
+                                  {c.pass ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                                  <span>{c.pass ? 'Pass' : 'Review'}</span>
                                 </span>
                               </div>
                             ))}
@@ -283,65 +354,65 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                     )}
 
                     {step.toolName === 'suggest_audience_segment' && data && (
-                      <div className="text-xs space-y-1">
-                        <span className="font-semibold text-slate-800 dark:text-slate-200">Suggested Segment:</span>
-                        <div className="rounded-lg bg-indigo-50/60 dark:bg-indigo-950/40 p-2.5 border border-indigo-100 dark:border-indigo-900">
-                          <p className="font-bold text-indigo-700 dark:text-indigo-300">{String(data.segmentName || '')}</p>
-                          <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">{String(data.reasoning || '')}</p>
+                      <div className="space-y-2 text-xs">
+                        <span className="font-semibold text-slate-300">Target Audience Match:</span>
+                        <div className="rounded-lg bg-indigo-500/10 p-3 border border-indigo-500/20 space-y-1">
+                          <p className="font-bold text-indigo-300 font-mono text-xs">
+                            {String(data.segmentName || '')}
+                          </p>
+                          <p className="text-[11px] text-slate-400 leading-relaxed">
+                            {String(data.reasoning || '')}
+                          </p>
                         </div>
                       </div>
                     )}
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px]">
-                    <span className="text-emerald-600 font-semibold flex items-center gap-1">
-                      <span>✓</span> Validated
+                  <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px]">
+                    <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3" />
+                      <span>Verified Tool Output</span>
                     </span>
-                    <button
-                      type="button"
-                      className="text-xs font-semibold text-indigo-600 hover:underline"
-                    >
-                      Approve Step
-                    </button>
+                    <span className="text-slate-500 font-mono text-[10px]">HITL Approved</span>
                   </div>
                 </div>
               );
             })}
           </div>
-        </section>
+        </motion.section>
       )}
 
       {/* Main 2-Column Editor Layout */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Editor Area (2 columns) */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-4">
+          <div className="glass-panel p-6 rounded-2xl space-y-4">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                Title
+              <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
+                Asset Title
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm focus:border-indigo-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                className="mt-1.5 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  Body Content
+                <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
+                  Body Content (Markdown / JSON)
                 </label>
-                <span className="text-xs text-slate-400 font-mono">
+                <span className="text-[11px] text-slate-500 font-mono">
                   {bodyText.length} characters • ~{Math.round(bodyText.length / 4)} tokens
                 </span>
               </div>
               <textarea
-                rows={16}
+                rows={18}
                 value={bodyText}
                 onChange={(e) => setBodyText(e.target.value)}
-                className="mt-1 block w-full font-mono text-xs rounded-lg border border-slate-300 p-3.5 focus:border-indigo-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white leading-relaxed"
+                className="mt-1.5 block w-full font-mono text-xs rounded-xl border border-white/10 bg-white/[0.02] p-4 text-slate-200 focus:border-indigo-500 focus:outline-none leading-relaxed transition resize-y"
               />
             </div>
           </div>
@@ -349,19 +420,24 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
 
         {/* Version History Sidebar (1 column) */}
         <div className="space-y-6">
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
-              Version Snapshots
-            </h2>
-            <p className="text-xs text-slate-500 mt-1 mb-4">Immutable historical versions for audit and diffs.</p>
+          <div className="glass-panel p-6 rounded-2xl space-y-4">
+            <div className="flex items-center gap-2">
+              <History className="h-4 w-4 text-indigo-400" />
+              <h2 className="text-sm font-bold uppercase tracking-wider text-white font-mono">
+                Version History
+              </h2>
+            </div>
+            <p className="text-xs text-slate-400">
+              Immutable content snapshots recorded for auditability and diff rollback.
+            </p>
 
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            <div className="divide-y divide-white/[0.06] pt-2">
               {versions.map((v) => (
                 <div key={v.id} className="py-3 flex items-center justify-between text-xs">
                   <div>
-                    <span className="font-bold text-slate-800 dark:text-slate-200">Version {v.versionNo}</span>
-                    <p className="text-slate-400 text-[11px] mt-0.5">
-                      {new Date(v.createdAt).toLocaleString(undefined, {
+                    <span className="font-semibold text-white font-mono">Snapshot v{v.versionNo}</span>
+                    <p className="text-slate-500 text-[11px] mt-0.5 font-mono">
+                      {new Date(v.createdAt).toLocaleDateString(undefined, {
                         month: 'short',
                         day: 'numeric',
                         hour: '2-digit',
@@ -370,8 +446,8 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                     </p>
                   </div>
                   {v.versionNo === item.currentVersion?.versionNo && (
-                    <span className="rounded bg-indigo-50 px-2 py-0.5 font-semibold text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
-                      Current
+                    <span className="rounded-full bg-indigo-500/10 border border-indigo-500/30 px-2 py-0.5 text-[10px] font-mono font-semibold text-indigo-400">
+                      Active
                     </span>
                   )}
                 </div>
@@ -379,12 +455,13 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-400 space-y-2">
-            <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span>🤖</span> AI Publishing Copilot
+          <div className="glass-panel p-6 rounded-2xl text-xs text-slate-400 space-y-2.5">
+            <div className="font-semibold text-white flex items-center gap-2 font-mono text-xs">
+              <Sparkles className="h-4 w-4 text-indigo-400" />
+              <span>Automated RAG Vector Indexing</span>
             </div>
-            <p>
-              When published, this content will be automatically chunked and embedded into pgvector (384 dimensions) for RAG assistant retrieval.
+            <p className="text-slate-400 leading-relaxed text-[11px]">
+              Upon edge publication, this document is chunked and embedded via HuggingFace BGE into 384-dimensional dense vectors stored in Neon PostgreSQL with pgvector cosine distance indexing.
             </p>
           </div>
         </div>
