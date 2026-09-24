@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
+import authRoutes from './modules/auth/routes';
 import { errorHandler } from './middleware/errorHandler';
 
 export function createApp(): Express {
@@ -25,6 +26,9 @@ export function createApp(): Express {
       docs: '/api/docs',
     });
   });
+
+  // Modules
+  app.use('/api/auth', authRoutes);
 
   // Central error handler
   app.use(errorHandler);
