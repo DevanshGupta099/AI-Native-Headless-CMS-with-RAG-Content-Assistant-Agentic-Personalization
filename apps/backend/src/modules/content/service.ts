@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../../config/database';
 import { AppError } from '../../utils/AppError';
 import { slugify } from '../../utils/slugify';
+import { triggerEmbeddingPipeline } from '../../workers/embedding.worker';
 import {
   CreateContentInput,
   UpdateContentInput,
@@ -260,10 +261,6 @@ export class ContentService {
   async publish(id: string): Promise<ContentItemDetail> {
     const existing = await this.getById(id);
 
-    if (existing.status === 'PUBLISHED') {
-      return existing;
-    }
-
     const updated = await prisma.contentItem.update({
       where: { id },
       data: {
@@ -278,6 +275,11 @@ export class ContentService {
           take: 1,
         },
       },
+    });
+
+    // Trigger auto-embedding pipeline in the background
+    await triggerEmbeddingPipeline(id).catch((err) => {
+      console.error(`Failed to trigger embedding pipeline for ${id}:`, err);
     });
 
     return {

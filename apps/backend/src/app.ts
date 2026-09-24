@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import authRoutes from './modules/auth/routes';
 import contentRoutes from './modules/content/routes';
+import aiRoutes from './modules/ai/routes';
 import { errorHandler } from './middleware/errorHandler';
 
 export function createApp(): Express {
@@ -31,6 +32,7 @@ export function createApp(): Express {
   // Modules
   app.use('/api/auth', authRoutes);
   app.use('/api/content', contentRoutes);
+  app.use('/api/assistant', aiRoutes);
 
   // Central error handler
   app.use(errorHandler);
