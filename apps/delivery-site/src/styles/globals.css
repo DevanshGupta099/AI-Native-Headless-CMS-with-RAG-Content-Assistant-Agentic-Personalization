@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 224 71% 4%;
+    --primary: 238 82% 59%;
+    --primary-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+  }
+
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 210 20% 98%;
+    --primary: 238 82% 65%;
+    --primary-foreground: 224 71% 4%;
+    --border: 215 28% 17%;
+  }
+}
+
+body {
+  @apply bg-background text-foreground antialiased selection:bg-indigo-500/20 selection:text-indigo-600;
+}
