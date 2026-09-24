@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
-import { SearchQuerySchema, ChatRequestSchema } from '@contentpilot/shared';
+import { SearchQuerySchema, ChatRequestSchema, AgentExecuteSchema } from '@contentpilot/shared';
 import { aiService } from './service';
+import { agentOrchestrator } from './agent/orchestrator';
 import { asyncHandler } from '../../middleware/asyncHandler';
+import { AppError } from '../../utils/AppError';
 
 export const search = asyncHandler(async (req: Request, res: Response) => {
   const input = SearchQuerySchema.parse(req.body);
@@ -54,6 +56,42 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
       answer,
       sources,
     },
+    meta: {
+      timestamp: new Date().toISOString(),
+    },
+  });
+});
+
+export const executeAgent = asyncHandler(async (req: Request, res: Response) => {
+  const input = AgentExecuteSchema.parse(req.body);
+  const userId = req.user?.id;
+
+  if (!userId) {
+    throw new AppError('Unauthorized', 401, 'UNAUTHORIZED');
+  }
+
+  const run = await agentOrchestrator.execute(input.task, input.contentId, userId);
+
+  res.status(200).json({
+    data: run,
+    meta: {
+      timestamp: new Date().toISOString(),
+    },
+  });
+});
+
+export const getAgentLogs = asyncHandler(async (req: Request, res: Response) => {
+  const idParam = req.params.id;
+  const id = Array.isArray(idParam) ? idParam[0] : idParam;
+
+  if (!id) {
+    throw new AppError('Run ID parameter is required', 400, 'BAD_REQUEST');
+  }
+
+  const trace = await agentOrchestrator.getRunTrace(id);
+
+  res.status(200).json({
+    data: trace,
     meta: {
       timestamp: new Date().toISOString(),
     },

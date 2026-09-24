@@ -1,0 +1,52 @@
+[
+  {
+    "id": "q1",
+    "query": "What is headless CMS architecture?",
+    "relevantKeywords": ["headless", "decouples", "architecture", "presentation layer"]
+  },
+  {
+    "id": "q2",
+    "query": "How does vector embedding search work?",
+    "relevantKeywords": ["vector", "embedding", "cosine", "similarity", "pgvector"]
+  },
+  {
+    "id": "q3",
+    "query": "What are audience segments in CMS?",
+    "relevantKeywords": ["segment", "audience", "personalization", "rules"]
+  },
+  {
+    "id": "q4",
+    "query": "How is content versioning handled?",
+    "relevantKeywords": ["version", "snapshot", "immutable", "history"]
+  },
+  {
+    "id": "q5",
+    "query": "What are the publish state transitions?",
+    "relevantKeywords": ["DRAFT", "PUBLISHED", "ARCHIVED", "state machine"]
+  },
+  {
+    "id": "q6",
+    "query": "How does the streaming chat assistant work?",
+    "relevantKeywords": ["SSE", "Server-Sent Events", "streaming", "tokens"]
+  },
+  {
+    "id": "q7",
+    "query": "What does the Prep for Publish agent do?",
+    "relevantKeywords": ["meta description", "SEO score", "agent", "checklist"]
+  },
+  {
+    "id": "q8",
+    "query": "What is the embedding dimension used in ContentPilot?",
+    "relevantKeywords": ["384", "bge-small-en-v1.5", "dimensions"]
+  },
+  {
+    "id": "q9",
+    "query": "How does variant delivery resolve content?",
+    "relevantKeywords": ["variant", "visitor", "fallback", "resolution"]
+  },
+  {
+    "id": "q10",
+    "query": "Why is human-in-the-loop required for agents?",
+    "relevantKeywords": ["approval", "human-in-the-loop", "brand safety", "trust"]
+  }
+]

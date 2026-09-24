@@ -3,7 +3,7 @@
 import { useEffect, useState, use, useCallback } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
-import { ContentItemDetail, ContentVersionSummary } from '@contentpilot/shared';
+import { ContentItemDetail, ContentVersionSummary, AgentRun } from '@contentpilot/shared';
 
 export default function ContentEditorPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -14,6 +14,8 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [runningAgent, setRunningAgent] = useState(false);
+  const [agentRun, setAgentRun] = useState<AgentRun | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
@@ -67,7 +69,6 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
 
       setItem(res.data);
       setSuccessMsg('Saved successfully as a new version!');
-      // Reload version history
       const versionsRes = await api.get<{ data: ContentVersionSummary[] }>(`/api/content/${id}/versions`);
       setVersions(versionsRes.data);
     } catch (err: unknown) {
@@ -98,6 +99,30 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
       }
     } finally {
       setPublishing(false);
+    }
+  };
+
+  const handleRunAgent = async () => {
+    setRunningAgent(true);
+    setError(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await api.post<{ data: AgentRun }>('/api/assistant/agent/execute', {
+        task: 'prepare_publish',
+        contentId: id,
+      });
+
+      setAgentRun(res.data);
+      setSuccessMsg('Agent completed all 3 preparation tools. Review the checklist below.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Agent execution failed');
+      }
+    } finally {
+      setRunningAgent(false);
     }
   };
 
@@ -149,6 +174,15 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
 
         <div className="flex flex-wrap items-center gap-2.5">
           <button
+            onClick={handleRunAgent}
+            disabled={runningAgent}
+            className="rounded-lg bg-indigo-50 border border-indigo-200 px-3.5 py-2 text-xs font-semibold text-indigo-700 shadow-sm hover:bg-indigo-100 transition focus:outline-none dark:border-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 disabled:opacity-50 flex items-center gap-1.5"
+          >
+            <span>✨</span>
+            <span>{runningAgent ? 'Running Agent Tools...' : 'Prep for Publish (AI)'}</span>
+          </button>
+
+          <button
             onClick={handleSave}
             disabled={saving}
             className="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 disabled:opacity-50"
@@ -168,7 +202,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
             href={`http://localhost:3002/content/${item.slug}`}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg border border-indigo-200 bg-indigo-50 px-3.5 py-2 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 dark:border-indigo-900 dark:bg-indigo-950 dark:text-indigo-300"
+            className="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
           >
             Live Preview ↗
           </a>
@@ -176,11 +210,105 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* Notifications */}
-      {error && (
-        <div className="rounded-lg bg-rose-50 p-4 text-sm text-rose-700 border border-rose-200">{error}</div>
-      )}
+      {error && <div className="rounded-lg bg-rose-50 p-4 text-sm text-rose-700 border border-rose-200">{error}</div>}
       {successMsg && (
         <div className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-700 border border-emerald-200">{successMsg}</div>
+      )}
+
+      {/* Agent Execution Trace Panel (when executed) */}
+      {agentRun && (
+        <section className="rounded-2xl border-2 border-indigo-200 bg-indigo-50/40 p-6 shadow-sm dark:border-indigo-900 dark:bg-indigo-950/20 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🤖</span>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                  Agent Execution Trace • {agentRun.task}
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Run ID: {agentRun.id} • Status: <span className="font-semibold text-emerald-600">{agentRun.status}</span>
+                </p>
+              </div>
+            </div>
+            <span className="text-[11px] rounded-full bg-indigo-100 px-3 py-1 font-semibold text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">
+              Human-in-the-Loop Approval Required
+            </span>
+          </div>
+
+          {/* Timeline of Steps */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            {agentRun.steps.map((step) => {
+              const data = step.output.data as Record<string, unknown>;
+              return (
+                <div
+                  key={step.stepIndex}
+                  className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                        Step {step.stepIndex + 1}: {step.toolName.replace(/_/g, ' ')}
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-mono">{step.output.durationMs}ms</span>
+                    </div>
+
+                    {step.toolName === 'generate_meta_description' && data && (
+                      <div className="text-xs space-y-1">
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">Recommended Meta Description:</p>
+                        <p className="italic text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                          "{String(data.metaDescription || '')}"
+                        </p>
+                        <p className="text-[10px] text-slate-400">{String(data.charCount || 0)} characters</p>
+                      </div>
+                    )}
+
+                    {step.toolName === 'check_seo_score' && data && (
+                      <div className="text-xs space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-slate-800 dark:text-slate-200">SEO Health Score:</span>
+                          <span className="text-sm font-extrabold text-emerald-600">{String(data.score)}% (Grade {String(data.grade)})</span>
+                        </div>
+                        <div className="space-y-1 pt-1">
+                          {Array.isArray(data.checks) &&
+                            data.checks.map((c: { name: string; pass: boolean; detail: string }, idx: number) => (
+                              <div key={idx} className="flex items-center justify-between text-[11px]">
+                                <span className="text-slate-500">{c.name}</span>
+                                <span className={c.pass ? 'text-emerald-600 font-bold' : 'text-rose-500 font-bold'}>
+                                  {c.pass ? '✓ Pass' : '✗ Check'}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {step.toolName === 'suggest_audience_segment' && data && (
+                      <div className="text-xs space-y-1">
+                        <span className="font-semibold text-slate-800 dark:text-slate-200">Suggested Segment:</span>
+                        <div className="rounded-lg bg-indigo-50/60 dark:bg-indigo-950/40 p-2.5 border border-indigo-100 dark:border-indigo-900">
+                          <p className="font-bold text-indigo-700 dark:text-indigo-300">{String(data.segmentName || '')}</p>
+                          <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">{String(data.reasoning || '')}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px]">
+                    <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                      <span>✓</span> Validated
+                    </span>
+                    <button
+                      type="button"
+                      className="text-xs font-semibold text-indigo-600 hover:underline"
+                    >
+                      Approve Step
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
       )}
 
       {/* Main 2-Column Editor Layout */}

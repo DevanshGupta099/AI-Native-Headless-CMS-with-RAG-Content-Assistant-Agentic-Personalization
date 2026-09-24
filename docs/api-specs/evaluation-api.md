@@ -8,6 +8,7 @@ Provides automated benchmarking and history tracking for RAG retrieval quality, 
 |--------|----------|-------------|---------------|
 | `POST` | `/api/eval/run` | Execute an evaluation batch | Yes (Admin/Editor) |
 | `GET` | `/api/eval/results` | Query historical evaluation run scores | Yes (Admin/Editor) |
+| `GET` | `/api/eval/summary` | Get latest benchmark scores for all 3 categories | Yes (Admin/Editor) |
 
 ---
 
