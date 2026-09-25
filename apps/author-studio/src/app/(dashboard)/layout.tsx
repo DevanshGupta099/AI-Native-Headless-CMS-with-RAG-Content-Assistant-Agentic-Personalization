@@ -97,6 +97,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {mobileNavOpen && (
             <button
               onClick={() => setMobileNavOpen(false)}
+              aria-label="Close navigation drawer"
               className="md:hidden p-1.5 rounded-lg bg-white/[0.05] text-zinc-400 hover:text-white"
             >
               <X className="h-5 w-5" />
@@ -205,6 +206,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
         <button
           onClick={handleLogout}
+          aria-label="Sign out of Author Studio"
           title="Sign out of Author Studio"
           className="text-zinc-400 hover:text-rose-400 p-2 rounded-xl hover:bg-white/[0.06] transition"
         >
@@ -245,6 +247,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* Mobile Hamburger Button */}
             <button
               onClick={() => setMobileNavOpen(true)}
+              aria-label="Open mobile navigation drawer"
               className="md:hidden p-2 rounded-xl bg-white/[0.05] text-zinc-300 hover:text-white"
             >
               <Menu className="h-5 w-5" />

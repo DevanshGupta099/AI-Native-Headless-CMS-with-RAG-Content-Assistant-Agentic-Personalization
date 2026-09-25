@@ -115,9 +115,22 @@ export default function NeuralFlowCanvas() {
       renderer.setSize(width, height);
     };
 
+    let isVisible = true;
+    let observer: IntersectionObserver | null = null;
+    if (typeof IntersectionObserver !== 'undefined' && container) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          isVisible = entry?.isIntersecting ?? true;
+        },
+        { threshold: 0.05 }
+      );
+      observer.observe(container);
+    }
+
     const startTime = performance.now();
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
+      if (!isVisible) return;
       const time = (performance.now() - startTime) * 0.001 * 1.4;
 
       const positionAttr = geometry.getAttribute('position') as THREE.BufferAttribute | undefined;
@@ -148,6 +161,7 @@ export default function NeuralFlowCanvas() {
     animate();
 
     return () => {
+      observer?.disconnect();
       cancelAnimationFrame(animationFrameId);
       container.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);

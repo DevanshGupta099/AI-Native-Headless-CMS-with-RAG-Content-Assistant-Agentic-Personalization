@@ -193,9 +193,22 @@ export default function VectorSpaceCanvas() {
       renderer.setSize(newWidth, newHeight);
     };
 
+    let isVisible = true;
+    let observer: IntersectionObserver | null = null;
+    if (typeof IntersectionObserver !== 'undefined' && container) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          isVisible = entry?.isIntersecting ?? true;
+        },
+        { threshold: 0.05 }
+      );
+      observer.observe(container);
+    }
+
     const startTime = performance.now();
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
+      if (!isVisible) return;
       const elapsedTime = (performance.now() - startTime) * 0.001;
 
       // Continuous subtle orbital rotation with mouse tilt
@@ -235,6 +248,7 @@ export default function VectorSpaceCanvas() {
     animate();
 
     return () => {
+      observer?.disconnect();
       cancelAnimationFrame(animationFrameId);
       container.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);

@@ -43,8 +43,16 @@ export class PgVectorStore {
     queryEmbedding: number[],
     options?: VectorSearchOptions
   ): Promise<SearchResultChunk[]> {
-    const topK = options?.topK ?? 5;
-    const minSimilarity = options?.minSimilarity ?? 0.5;
+    if (
+      !Array.isArray(queryEmbedding) ||
+      queryEmbedding.length === 0 ||
+      queryEmbedding.some((n) => typeof n !== 'number' || !Number.isFinite(n))
+    ) {
+      throw new Error('Invalid embedding vector: must be an array of finite numbers');
+    }
+
+    const topK = Math.min(Math.max(1, options?.topK ?? 5), 50);
+    const minSimilarity = Math.min(Math.max(0, options?.minSimilarity ?? 0.5), 1);
     const vectorString = `[${queryEmbedding.join(',')}]`;
 
     const rawResults = await prisma.$queryRawUnsafe<

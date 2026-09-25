@@ -8,11 +8,24 @@ import '../styles/globals.css';
 export const metadata: Metadata = {
   title: 'ContentPilot AI | Enterprise Experience Delivery Fabric',
   description: 'AI-Native Headless CMS content delivery with personalized experiences and vector retrieval',
+  metadataBase: new URL('http://localhost:3002'),
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        />
+      </head>
       <body className="min-h-screen flex flex-col bg-[#09090b] text-[#F5F5F7] font-sans antialiased selection:bg-[#E8380D]/30 selection:text-[#FFB347] relative">
         <AtmosphericBackground />
 

@@ -140,11 +140,25 @@ export default function HeroParticleField() {
       renderer.setSize(width, height);
     };
 
+    // Viewport Intersection Observer to throttle when scrolled offscreen
+    let isVisible = true;
+    let observer: IntersectionObserver | null = null;
+    if (typeof IntersectionObserver !== 'undefined' && container) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          isVisible = entry?.isIntersecting ?? true;
+        },
+        { threshold: 0.05 }
+      );
+      observer.observe(container);
+    }
+
     // Animation Loop
     const startTime = performance.now();
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
+      if (!isVisible) return;
 
       const elapsed = (performance.now() - startTime) * 0.001;
       mouseX += (targetMouseX - mouseX) * 0.05;
@@ -239,6 +253,7 @@ export default function HeroParticleField() {
     animate();
 
     return () => {
+      observer?.disconnect();
       cancelAnimationFrame(animId);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);

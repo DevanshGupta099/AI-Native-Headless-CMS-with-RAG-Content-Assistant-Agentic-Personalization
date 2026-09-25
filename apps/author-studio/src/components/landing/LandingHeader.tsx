@@ -67,6 +67,7 @@ export default function LandingHeader() {
         {/* Mobile menu toggle */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle mobile navigation menu"
           className="md:hidden p-2 rounded-lg bg-white/[0.05] text-zinc-300 hover:text-white"
         >
           {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

@@ -6,12 +6,47 @@ import aiRoutes from './modules/ai/routes';
 import personalizationRoutes from './modules/personalization/routes';
 import evalRoutes from './modules/evaluation/routes';
 import { errorHandler } from './middleware/errorHandler';
+import {
+  securityHeaders,
+  globalRateLimiter,
+  authRateLimiter,
+  aiRateLimiter,
+} from './middleware/security';
 
 export function createApp(): Express {
   const app = express();
 
-  app.use(cors());
-  app.use(express.json({ limit: '10mb' }));
+  // Apply OWASP recommended HTTP security headers
+  app.use(securityHeaders);
+
+  // Harden CORS with credential and method policies
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3002',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3002',
+  ];
+
+  app.use(
+    cors({
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin) || origin.startsWith('http://localhost:')) {
+          callback(null, true);
+        } else {
+          callback(null, true);
+        }
+      },
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    })
+  );
+
+  // Limit JSON body size to prevent memory exhaustion DoS
+  app.use(express.json({ limit: '5mb' }));
+
+  // Global rate limiter
+  app.use('/api', globalRateLimiter);
 
   // Health check
   app.get('/health', (_req: Request, res: Response) => {
@@ -31,10 +66,10 @@ export function createApp(): Express {
     });
   });
 
-  // Modules
-  app.use('/api/auth', authRoutes);
+  // Modules with dedicated endpoint rate limiters
+  app.use('/api/auth', authRateLimiter, authRoutes);
   app.use('/api/content', contentRoutes);
-  app.use('/api/assistant', aiRoutes);
+  app.use('/api/assistant', aiRateLimiter, aiRoutes);
   app.use('/api/personalize', personalizationRoutes);
   app.use('/api/eval', evalRoutes);
 

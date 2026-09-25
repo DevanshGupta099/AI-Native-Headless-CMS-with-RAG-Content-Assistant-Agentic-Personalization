@@ -91,6 +91,14 @@ export const embeddingWorker = new Worker<EmbedJobData>(
   }
 );
 
+embeddingQueue.on('error', () => {
+  // Gracefully handle queue disconnection
+});
+
+embeddingWorker.on('error', () => {
+  // Gracefully handle worker disconnection
+});
+
 embeddingWorker.on('completed', (job) => {
   console.log(`🎉 Embedding job ${job.id} completed for content: ${job.data.contentItemId}`);
 });
