@@ -76,7 +76,7 @@ ${contextBlock}
       for await (const token of this.llmProvider.chat(messages, { temperature: 0.3 })) {
         yield {
           event: 'token',
-          data: { token },
+          data: { token, text: token },
         };
       }
     } catch (err: unknown) {

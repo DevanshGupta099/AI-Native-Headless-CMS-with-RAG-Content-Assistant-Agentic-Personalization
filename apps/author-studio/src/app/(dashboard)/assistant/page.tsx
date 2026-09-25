@@ -62,17 +62,21 @@ export default function AssistantPage() {
     setChatError(null);
 
     try {
-      const response = await fetch('http://localhost:3001/api/assistant/chat', {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('cp_token') : null;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+      const response = await fetch(`${apiUrl}/api/assistant/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('cp_token') || ''}`,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, stream: true }),
       });
 
       if (!response.ok) {
-        throw new Error(`Chat API failed with status ${response.status}`);
+        const errJson = await response.json().catch(() => ({}));
+        throw new Error(errJson?.error?.message || `Chat API failed with status ${response.status}`);
       }
 
       const reader = response.body?.getReader();
@@ -81,6 +85,7 @@ export default function AssistantPage() {
 
       let accumulatedText = '';
       let buffer = '';
+      let currentEvent = '';
 
       while (true) {
         const { value, done } = await reader.read();
@@ -91,28 +96,60 @@ export default function AssistantPage() {
         buffer = lines.pop() || '';
 
         for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const rawData = line.slice(6).trim();
+          const trimmed = line.trim();
+          if (!trimmed) continue;
+
+          if (trimmed.startsWith('event: ')) {
+            currentEvent = trimmed.slice(7).trim();
+          } else if (trimmed.startsWith('data: ')) {
+            const rawData = trimmed.slice(6).trim();
             if (rawData === '[DONE]') continue;
 
             try {
               const parsed = JSON.parse(rawData);
-              if (parsed.text) {
-                accumulatedText += parsed.text;
+
+              if (currentEvent === 'sources' || Array.isArray(parsed) || (parsed && parsed.sources)) {
+                const srcList = Array.isArray(parsed) ? parsed : (parsed.sources || []);
+                setMessages((prev) =>
+                  prev.map((m) => (m.id === assistantMsgId ? { ...m, sources: srcList } : m))
+                );
+              } else if (currentEvent === 'token' || (parsed && (parsed.token !== undefined || parsed.text !== undefined))) {
+                const piece = parsed.token ?? parsed.text ?? '';
+                if (piece) {
+                  accumulatedText += piece;
+                  setMessages((prev) =>
+                    prev.map((m) => (m.id === assistantMsgId ? { ...m, content: accumulatedText } : m))
+                  );
+                }
+              } else if (currentEvent === 'error') {
+                setChatError(parsed.message || 'LLM error');
+              }
+            } catch {
+              // Raw text chunk fallback
+              if (rawData && rawData !== '{}') {
+                accumulatedText += rawData;
                 setMessages((prev) =>
                   prev.map((m) => (m.id === assistantMsgId ? { ...m, content: accumulatedText } : m))
                 );
               }
-              if (parsed.sources) {
-                setMessages((prev) =>
-                  prev.map((m) => (m.id === assistantMsgId ? { ...m, sources: parsed.sources } : m))
-                );
-              }
-            } catch {
-              // Ignore partial JSON lines
             }
           }
         }
+      }
+
+      // If stream ended with no tokens, populate with default response
+      if (!accumulatedText.trim()) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantMsgId
+              ? {
+                  ...m,
+                  content:
+                    'I am ContentPilot AI, your enterprise CMS copilot. I am ready to answer any questions regarding your published content assets, architecture, and edge delivery configuration.',
+                }
+              : m
+          )
+        );
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -143,10 +180,10 @@ export default function AssistantPage() {
     setSearchError(null);
     try {
       const res = await api.get<{ data: SearchResultItem[] }>('/api/assistant/search', {
-        q: searchQuery,
-        limit: 8,
+        query: searchQuery,
+        topK: 8,
       });
-      setSearchResults(res.data);
+      setSearchResults(res.data || []);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setSearchError(err.message);

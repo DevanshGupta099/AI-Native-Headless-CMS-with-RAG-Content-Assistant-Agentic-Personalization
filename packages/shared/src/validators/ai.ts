@@ -1,10 +1,22 @@
 import { z } from 'zod';
 
-export const SearchQuerySchema = z.object({
-  query: z.string().min(1, 'Search query cannot be empty'),
-  topK: z.coerce.number().int().min(1).max(20).default(5),
-  minSimilarity: z.coerce.number().min(0).max(1).default(0.5),
-});
+export const SearchQuerySchema = z
+  .object({
+    query: z.string().optional(),
+    q: z.string().optional(),
+    topK: z.coerce.number().int().min(1).max(20).optional(),
+    limit: z.coerce.number().int().min(1).max(20).optional(),
+    minSimilarity: z.coerce.number().min(0).max(1).default(0.3),
+  })
+  .transform((data) => ({
+    query: (data.query || data.q || '').trim(),
+    topK: data.topK || data.limit || 5,
+    minSimilarity: data.minSimilarity ?? 0.3,
+  }))
+  .refine((data) => data.query.length > 0, {
+    message: 'Search query cannot be empty',
+    path: ['query'],
+  });
 export type SearchQueryInput = z.infer<typeof SearchQuerySchema>;
 
 export const ChatMessageSchema = z.object({

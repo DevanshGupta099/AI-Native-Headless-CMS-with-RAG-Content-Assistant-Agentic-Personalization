@@ -6,7 +6,8 @@ import { asyncHandler } from '../../middleware/asyncHandler';
 import { AppError } from '../../utils/AppError';
 
 export const search = asyncHandler(async (req: Request, res: Response) => {
-  const input = SearchQuerySchema.parse(req.body);
+  const raw = req.method === 'GET' ? req.query : { ...req.query, ...req.body };
+  const input = SearchQuerySchema.parse(raw);
   const results = await aiService.search(input.query, input.topK, input.minSimilarity);
 
   res.status(200).json({
