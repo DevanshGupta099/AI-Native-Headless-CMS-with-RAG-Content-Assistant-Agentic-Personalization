@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { ContentType, ContentItemDetail } from '@contentpilot/shared';
+import ModularBlockEditor from '@/components/editor/ModularBlockEditor';
 
 export default function NewContentPage() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function NewContentPage() {
   const [tags, setTags] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editorKey, setEditorKey] = useState(0);
 
   const handleTemplate = (tmpl: 'blog' | 'landing') => {
     if (tmpl === 'blog') {
@@ -37,6 +39,7 @@ export default function NewContentPage() {
         `# Enterprise AI-Native Experience Delivery Platform\n\nTransform how your organization orchestrates, versions, and delivers personalized content experiences globally.\n\n## Unified Experience Architecture\n- Autonomous Agent Publishing: Automated SEO grading, meta generation, and segment classification.\n- Real-time Edge Delivery: Personalized variants served dynamically with sub-15ms edge resolution.\n- Enterprise Quality Harness: Continuous benchmarking for RAG retrieval precision and agent reliability.\n\nStart delivering hyper-personalized digital experiences today.`
       );
     }
+    setEditorKey((k) => k + 1);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -155,21 +158,29 @@ export default function NewContentPage() {
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center justify-between mb-3">
             <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400">
-              Content Body (Markdown)
+              Modular Content Blocks &amp; Live Composition
             </label>
             <span className="text-[11px] text-[#FFB347] font-mono flex items-center gap-1">
               <Sparkles className="h-3 w-3" />
               <span>Auto-vectorized into 384-dim BGE upon publish</span>
             </span>
           </div>
-          <textarea
-            rows={14}
-            placeholder="Write full story or Markdown copy here..."
-            value={bodyText}
-            onChange={(e) => setBodyText(e.target.value)}
-            className="input-dark block w-full font-mono text-xs p-4 text-zinc-200 placeholder-zinc-600 leading-relaxed"
+          <ModularBlockEditor
+            key={editorKey}
+            initialText={bodyText}
+            onChange={(_blocks, plainText) => setBodyText(plainText)}
+            onAiAssistedEdit={async (prompt, currentContent) => {
+              try {
+                const res = await api.post<{ data?: { answer?: string }; reply?: string; message?: string }>('/api/assistant/chat', {
+                  message: `Improve or revise the following block based on instruction: "${prompt}".\n\nContent:\n${currentContent}\n\nReturn ONLY the revised block text without preamble.`,
+                });
+                return res.reply || res.data?.answer || res.message || currentContent;
+              } catch {
+                return currentContent;
+              }
+            }}
           />
         </div>
 

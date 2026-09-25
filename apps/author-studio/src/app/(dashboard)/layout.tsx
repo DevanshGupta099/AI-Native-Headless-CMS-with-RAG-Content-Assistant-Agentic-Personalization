@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import AtmosphericBackground from '@/components/ui/AtmosphericBackground';
 import Logo from '@/components/ui/Logo';
+import WorkspaceSwitcher from '@/components/ui/WorkspaceSwitcher';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -267,11 +268,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
 
-          {/* Header Right Status & Delivery Site Link */}
+          {/* Header Right Workspace Switcher & Delivery Link */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400 border border-emerald-500/20">
+            <WorkspaceSwitcher />
+
+            <div className="hidden lg:flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400 border border-emerald-500/20">
               <Radio className="h-3 w-3 animate-pulse" />
-              <span>pgvector Lake Active</span>
+              <span>pgvector Active</span>
             </div>
 
             <a

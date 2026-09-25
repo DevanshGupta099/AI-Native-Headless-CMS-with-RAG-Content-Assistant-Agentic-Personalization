@@ -13,6 +13,7 @@ import {
   Sparkles,
   Radio,
 } from 'lucide-react';
+import VisualABSimulator from '@/components/personalization/VisualABSimulator';
 
 interface Segment {
   id: string;
@@ -290,6 +291,9 @@ export default function PersonalizationPage() {
           <span>{error}</span>
         </div>
       )}
+
+      {/* Visual Multi-Segment A/B Simulator */}
+      <VisualABSimulator />
 
       {/* Grid: 1. Segments Management & 2. Variant Builder */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

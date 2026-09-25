@@ -18,9 +18,12 @@ import {
   X,
   Copy,
   Cpu,
+  FileCode2,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { ContentItemDetail, ContentVersionSummary, AgentRun } from '@contentpilot/shared';
+import ModularBlockEditor from '@/components/editor/ModularBlockEditor';
+import AemComponentExporterModal from '@/components/aem/AemComponentExporterModal';
 
 export default function ContentEditorPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -36,6 +39,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [copiedMeta, setCopiedMeta] = useState(false);
+  const [showAemModal, setShowAemModal] = useState(false);
 
   // Form states
   const [title, setTitle] = useState('');
@@ -236,6 +240,16 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
               <ExternalLink className="h-3.5 w-3.5 text-zinc-400" />
             </a>
           )}
+
+          <button
+            type="button"
+            onClick={() => setShowAemModal(true)}
+            className="btn-secondary inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-[#FFB347] hover:text-white border border-[#E8380D]/30 hover:border-[#E8380D]"
+            title="Export to Adobe Experience Manager Core Component (HTL, Coral 3 Dialog, Sling Model)"
+          >
+            <FileCode2 className="h-4 w-4 text-[#FFB347]" />
+            <span>Export to AEM</span>
+          </button>
         </div>
       </div>
 
@@ -387,7 +401,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Editor Area (2 columns) */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="surface-card p-6 sm:p-8 rounded-3xl space-y-4 border border-white/[0.08] shadow-xl">
+          <div className="surface-card p-6 sm:p-8 rounded-3xl space-y-5 border border-white/[0.08] shadow-xl">
             <div>
               <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400">
                 Asset Title
@@ -401,19 +415,28 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-3">
                 <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400">
-                  Body Content (Markdown / JSON)
+                  Modular Content Blocks &amp; Live Layout
                 </label>
                 <span className="text-[11px] text-zinc-400 font-mono">
                   {bodyText.length} characters • ~{Math.round(bodyText.length / 4)} tokens
                 </span>
               </div>
-              <textarea
-                rows={18}
-                value={bodyText}
-                onChange={(e) => setBodyText(e.target.value)}
-                className="input-dark mt-1.5 block w-full font-mono text-xs p-4 text-zinc-200 leading-relaxed resize-y"
+              <ModularBlockEditor
+                key={item.id}
+                initialText={bodyText}
+                onChange={(_blocks, plainText) => setBodyText(plainText)}
+                onAiAssistedEdit={async (prompt, currentContent) => {
+                  try {
+                    const res = await api.post<{ data?: { answer?: string }; reply?: string; message?: string }>('/api/assistant/chat', {
+                      message: `Improve or revise the following block based on instruction: "${prompt}".\n\nContent:\n${currentContent}\n\nReturn ONLY the revised block text without preamble.`,
+                    });
+                    return res.reply || res.data?.answer || res.message || currentContent;
+                  } catch {
+                    return currentContent;
+                  }
+                }}
               />
             </div>
           </div>
@@ -467,6 +490,14 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
       </div>
+
+      {/* Adobe Experience Manager Core Component Exporter Modal */}
+      <AemComponentExporterModal
+        isOpen={showAemModal}
+        onClose={() => setShowAemModal(false)}
+        contentTitle={item.title}
+        contentSlug={item.slug}
+      />
     </div>
   );
 }
