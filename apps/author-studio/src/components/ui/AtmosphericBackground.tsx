@@ -9,30 +9,30 @@ export default function AtmosphericBackground() {
       document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
-      {/* 1. Base Rich Obsidian / Graphite Canvas */}
-      <div className="absolute inset-0 bg-[#06070a]" />
+      {/* 1. Base Obsidian Void Canvas */}
+      <div className="absolute inset-0 bg-[#09090b]" />
 
-      {/* 2. Top Horizon Adobe Crimson & Coral Light Beam (Dramatic Studio Illumination) */}
-      <div className="absolute -top-48 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-[#eb1000]/25 via-[#ff284d]/10 to-transparent rounded-full blur-[130px] opacity-90" />
+      {/* 2. Top Horizon Firefly Amber & Coral Light Beam (Warm Studio Illumination) */}
+      <div className="absolute -top-52 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-gradient-to-b from-[#E8380D]/20 via-[#F56E40]/10 to-transparent rounded-full blur-[140px] opacity-85" />
 
-      {/* 3. Deep Accent Glows - Arctic Cyan & Ambient Rose */}
-      <div className="absolute top-[20%] -left-36 w-[600px] h-[600px] bg-[#00e5ff]/08 rounded-full blur-[170px]" />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[850px] h-[600px] bg-[#eb1000]/08 rounded-full blur-[180px]" />
+      {/* 3. Deep Accent Glows - Electric Blue & Warm Amber Horizon */}
+      <div className="absolute top-[18%] -left-48 w-[650px] h-[650px] bg-[#3B82F6]/[0.05] rounded-full blur-[180px]" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[900px] h-[650px] bg-[#E8380D]/[0.06] rounded-full blur-[190px]" />
 
-      {/* 4. Top Horizon Architectural Border Laser */}
-      <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#eb1000]/70 to-transparent shadow-[0_0_15px_rgba(235,16,0,0.8)]" />
+      {/* 4. Top Horizon Precision Laser Rail */}
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F56E40]/60 to-transparent shadow-[0_0_12px_rgba(232,56,13,0.6)]" />
 
       {/* 5. Precision Architectural Grid */}
-      <div className="absolute inset-0 architectural-grid opacity-80" />
+      <div className="absolute inset-0 architectural-grid opacity-75" />
 
       {/* 6. Dot Matrix Precision Layer */}
-      <div className="absolute inset-0 dot-matrix opacity-60" />
+      <div className="absolute inset-0 dot-matrix opacity-50" />
 
       {/* 7. Dynamic Cursor Spotlight (Follows Mouse Coordinates) */}
       <div className="absolute inset-0 cursor-spotlight" />
@@ -40,12 +40,12 @@ export default function AtmosphericBackground() {
       {/* 8. Fine Film Grain Tactile Noise Texture */}
       <div className="absolute inset-0 noise-overlay opacity-30 mix-blend-overlay" />
 
-      {/* 9. Subtle Studio Technical Coordinate Watermark (Fixed corners) */}
+      {/* 9. Technical Coordinate Watermarks */}
       <div className="absolute top-4 right-8 font-mono text-[9px] uppercase tracking-[0.25em] text-white/10 hidden xl:block">
-        ADOBE ENTERPRISE ARCHITECTURE // RAG EMBEDDING FABRIC V3.4
+        ADOBE EXPERIENCE FABRIC // RAG VECTOR LAKE V4.2
       </div>
       <div className="absolute bottom-4 left-8 font-mono text-[9px] uppercase tracking-[0.25em] text-white/10 hidden xl:block">
-        SENSEI AI ORCHESTRATOR // PGVECTOR COSINE SEARCH NODE
+        SENSEI AI ORCHESTRATION // GROQ LLAMA-3.3-70B ENGINE
       </div>
     </div>
   );

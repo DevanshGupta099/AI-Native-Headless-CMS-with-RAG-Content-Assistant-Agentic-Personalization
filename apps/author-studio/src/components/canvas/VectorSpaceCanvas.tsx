@@ -44,7 +44,7 @@ export default function VectorSpaceCanvas() {
     const height = container.clientHeight || 420;
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x06070a, 0.06);
+    scene.fog = new THREE.FogExp2(0x09090b, 0.05);
 
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0, 8.8);
@@ -60,15 +60,15 @@ export default function VectorSpaceCanvas() {
     const getColor = (category: string) => {
       switch (category) {
         case 'AEM_CORE':
-          return 0xffb800; // Adobe Warm Amber
+          return 0xffb347; // Luminous Amber
         case 'RAG_CHUNK':
-          return 0x10b981; // Aurora Emerald
+          return 0x22c55e; // Aurora Emerald
         case 'PERSONALIZATION':
-          return 0x00e5ff; // Neon Cyan
+          return 0x3b82f6; // Electric Blue
         case 'AGENT_TOOL':
-          return 0xff2247; // Adobe Crimson
+          return 0xe8380d; // Adobe Flame
         default:
-          return 0xf43f5e;
+          return 0xf56e40;
       }
     };
 
@@ -109,7 +109,7 @@ export default function VectorSpaceCanvas() {
 
     // Connecting Neural Semantic Links (HNSW Graph Representation)
     const lineMat = new THREE.LineBasicMaterial({
-      color: 0x6366f1,
+      color: 0xf56e40,
       transparent: true,
       opacity: 0.35,
     });
@@ -265,20 +265,20 @@ export default function VectorSpaceCanvas() {
 
       {/* Top Right Spectrum Legend */}
       <div className="absolute top-5 right-5 z-10 flex flex-col gap-2 rounded-2xl bg-black/60 p-3.5 backdrop-blur-xl border border-white/10 text-[11px]">
-        <div className="flex items-center gap-2 text-slate-300 font-medium">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#ffb800] shadow-[0_0_8px_#ffb800]" />
+        <div className="flex items-center gap-2 text-zinc-300 font-medium">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#ffb347] shadow-[0_0_8px_#ffb347]" />
           <span>AEM Content Core</span>
         </div>
-        <div className="flex items-center gap-2 text-slate-300 font-medium">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#10b981] shadow-[0_0_8px_#10b981]" />
+        <div className="flex items-center gap-2 text-zinc-300 font-medium">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#22c55e] shadow-[0_0_8px_#22c55e]" />
           <span>pgvector RAG Chunks</span>
         </div>
-        <div className="flex items-center gap-2 text-slate-300 font-medium">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#00e5ff] shadow-[0_0_8px_#00e5ff]" />
+        <div className="flex items-center gap-2 text-zinc-300 font-medium">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#3b82f6] shadow-[0_0_8px_#3b82f6]" />
           <span>Target Rules Engine</span>
         </div>
-        <div className="flex items-center gap-2 text-slate-300 font-medium">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#ff2247] shadow-[0_0_8px_#ff2247]" />
+        <div className="flex items-center gap-2 text-zinc-300 font-medium">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#e8380d] shadow-[0_0_8px_#e8380d]" />
           <span>Agent Publish Tools</span>
         </div>
       </div>

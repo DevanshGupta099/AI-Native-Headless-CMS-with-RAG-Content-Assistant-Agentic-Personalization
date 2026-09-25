@@ -11,31 +11,32 @@ export default function NeuralFlowCanvas() {
     if (!container) return;
 
     let animationFrameId: number;
-    const width = container.clientWidth;
-    const height = container.clientHeight || 360;
+    let width = container.clientWidth || 800;
+    let height = container.clientHeight || 400;
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x080b11, 0.05);
+    scene.fog = new THREE.FogExp2(0x09090b, 0.045);
 
     const camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 100);
-    camera.position.set(0, 3, 7);
+    camera.position.set(0, 3.2, 7.5);
     camera.lookAt(0, 0, 0);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
-    // Grid of particles forming a dynamic wave
-    const cols = 65;
-    const rows = 45;
+    // Grid of particles forming a dynamic neural wave
+    const cols = 70;
+    const rows = 50;
     const particleCount = cols * rows;
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
 
-    const color1 = new THREE.Color(0x00e5ff); // Spectrum Cyan
-    const color2 = new THREE.Color(0xeb1000); // Adobe Crimson
-    const color3 = new THREE.Color(0xff4d6d); // Adobe Coral
+    const color1 = new THREE.Color('#3B82F6'); // Electric blue
+    const color2 = new THREE.Color('#E8380D'); // Firefly flame
+    const color3 = new THREE.Color('#FFB347'); // Warm amber
 
     let index = 0;
     for (let i = 0; i < cols; i++) {
@@ -51,7 +52,7 @@ export default function NeuralFlowCanvas() {
         // Gradient based on distance from center
         const ratio = Math.hypot(x, z) / 8;
         const mixedColor = color1.clone().lerp(color2, Math.sin(ratio * Math.PI));
-        mixedColor.lerp(color3, (i / cols));
+        mixedColor.lerp(color3, i / cols);
 
         colors[index * 3] = mixedColor.r;
         colors[index * 3 + 1] = mixedColor.g;
@@ -65,11 +66,28 @@ export default function NeuralFlowCanvas() {
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
+    // Particle sprite
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d')!;
+    const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grad.addColorStop(0, 'rgba(255,255,255,1)');
+    grad.addColorStop(0.3, 'rgba(255,210,170,0.85)');
+    grad.addColorStop(0.7, 'rgba(232,56,13,0.3)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 64, 64);
+    const spriteTexture = new THREE.CanvasTexture(canvas);
+
     const material = new THREE.PointsMaterial({
-      size: 0.065,
+      size: 0.16,
+      map: spriteTexture,
       vertexColors: true,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
 
     const particles = new THREE.Points(geometry, material);
@@ -89,12 +107,12 @@ export default function NeuralFlowCanvas() {
 
     const handleResize = () => {
       if (!container) return;
-      const w = container.clientWidth || 800;
-      const h = container.clientHeight || 360;
-      if (w <= 0 || h <= 0) return;
-      camera.aspect = w / h;
+      width = container.clientWidth || 800;
+      height = container.clientHeight || 400;
+      if (width <= 0 || height <= 0) return;
+      camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      renderer.setSize(width, height);
     };
 
     window.addEventListener('resize', handleResize);
@@ -102,7 +120,7 @@ export default function NeuralFlowCanvas() {
     let clock = new THREE.Clock();
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      const time = clock.getElapsedTime() * 1.5;
+      const time = clock.getElapsedTime() * 1.4;
 
       const positionAttr = geometry.getAttribute('position') as THREE.BufferAttribute | undefined;
       if (positionAttr) {
@@ -112,11 +130,10 @@ export default function NeuralFlowCanvas() {
           for (let j = 0; j < rows; j++) {
             const x = pos[pIdx * 3] ?? 0;
             const z = pos[pIdx * 3 + 2] ?? 0;
-            // Dynamic wave equations
             pos[pIdx * 3 + 1] =
-              Math.sin(x * 0.8 + time) * 0.35 +
-              Math.cos(z * 0.6 + time * 0.8) * 0.35 +
-              Math.sin(Math.hypot(x, z) * 1.2 - time) * 0.2;
+              Math.sin(x * 0.8 + time) * 0.38 +
+              Math.cos(z * 0.65 + time * 0.85) * 0.38 +
+              Math.sin(Math.hypot(x, z) * 1.3 - time) * 0.22;
             pIdx++;
           }
         }
@@ -124,8 +141,8 @@ export default function NeuralFlowCanvas() {
       }
 
       // Parallax smooth interpolation
-      particles.rotation.y = time * 0.03 + mouseX * 0.15;
-      particles.rotation.x = 0.15 - mouseY * 0.1;
+      particles.rotation.y = time * 0.025 + mouseX * 0.12;
+      particles.rotation.x = 0.15 - mouseY * 0.08;
 
       renderer.render(scene, camera);
     };
@@ -139,14 +156,17 @@ export default function NeuralFlowCanvas() {
       if (renderer.domElement.parentElement) {
         renderer.domElement.parentElement.removeChild(renderer.domElement);
       }
+      geometry.dispose();
+      material.dispose();
+      spriteTexture.dispose();
       renderer.dispose();
     };
   }, []);
 
   return (
-    <div className="relative w-full h-[360px] overflow-hidden rounded-3xl bg-[#080b11] border border-white/[0.08]">
+    <div className="relative w-full h-[400px] overflow-hidden rounded-3xl bg-[#09090b] border border-white/[0.08]">
       <div ref={containerRef} className="w-full h-full" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#080b11] via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-transparent pointer-events-none" />
     </div>
   );
 }

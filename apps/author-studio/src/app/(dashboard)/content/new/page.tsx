@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -77,36 +77,38 @@ export default function NewContentPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 pb-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
         <div>
           <Link
             href="/content"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-white transition"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Back to Content Library</span>
           </Link>
-          <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-white">Create New Content Asset</h1>
-          <p className="mt-1 text-xs text-slate-400">
+          <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-white">
+            Create New Content Asset
+          </h1>
+          <p className="mt-1 text-xs text-zinc-400">
             Author Markdown or structured JSON ready for vectorization and edge delivery.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500 font-mono">Load Starter:</span>
+          <span className="text-xs text-zinc-400 font-mono">Load Starter:</span>
           <button
             type="button"
             onClick={() => handleTemplate('blog')}
-            className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/[0.08] hover:text-white transition"
+            className="btn-secondary rounded-xl px-3 py-1.5 text-xs font-medium"
           >
             RAG Article
           </button>
           <button
             type="button"
             onClick={() => handleTemplate('landing')}
-            className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/[0.08] hover:text-white transition"
+            className="btn-secondary rounded-xl px-3 py-1.5 text-xs font-medium"
           >
             Landing Page
           </button>
@@ -120,10 +122,10 @@ export default function NewContentPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6 specular-card p-6 sm:p-8 rounded-2xl">
+      <form onSubmit={handleSubmit} className="space-y-6 surface-card p-6 sm:p-8 rounded-3xl border border-white/[0.08] shadow-xl">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           <div className="sm:col-span-2">
-            <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
+            <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400">
               Content Title
             </label>
             <input
@@ -132,18 +134,18 @@ export default function NewContentPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              className="mt-1.5 block w-full rounded-xl border border-white/10 bg-[#0c0e14] px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
+              className="input-dark mt-1.5 block w-full px-4 py-2.5 text-sm text-white placeholder-zinc-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
+            <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400">
               Content Type
             </label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as ContentType)}
-              className="mt-1.5 block w-full rounded-xl border border-white/10 bg-[#0c0e14] px-3.5 py-2.5 text-sm text-slate-200 focus:border-[#eb1000] focus:outline-none transition"
+              className="input-dark mt-1.5 block w-full px-3.5 py-2.5 text-sm text-zinc-200"
             >
               <option value="BLOG_POST">Blog Post</option>
               <option value="LANDING_PAGE">Landing Page</option>
@@ -154,10 +156,10 @@ export default function NewContentPage() {
 
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
+            <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400">
               Content Body (Markdown)
             </label>
-            <span className="text-[11px] text-cyan-400 font-mono flex items-center gap-1">
+            <span className="text-[11px] text-[#FFB347] font-mono flex items-center gap-1">
               <Sparkles className="h-3 w-3" />
               <span>Auto-vectorized into 384-dim BGE upon publish</span>
             </span>
@@ -167,12 +169,12 @@ export default function NewContentPage() {
             placeholder="Write full story or Markdown copy here..."
             value={bodyText}
             onChange={(e) => setBodyText(e.target.value)}
-            className="block w-full font-mono text-xs rounded-xl border border-white/10 bg-[#0c0e14] p-4 text-slate-200 placeholder-slate-600 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition leading-relaxed"
+            className="input-dark block w-full font-mono text-xs p-4 text-zinc-200 placeholder-zinc-600 leading-relaxed"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
+          <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400">
             Tags & Keywords (Comma-separated)
           </label>
           <input
@@ -180,21 +182,21 @@ export default function NewContentPage() {
             placeholder="AI, RAG, Personalization, AEM, Architecture"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="mt-1.5 block w-full rounded-xl border border-white/10 bg-[#0c0e14] px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
+            className="input-dark mt-1.5 block w-full px-4 py-2.5 text-sm text-white placeholder-zinc-500"
           />
         </div>
 
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.08]">
           <Link
             href="/content"
-            className="rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-slate-400 hover:bg-white/[0.04] hover:text-white transition"
+            className="btn-secondary rounded-xl px-4 py-2 text-xs font-semibold"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={loading}
-            className="btn-adobe-primary inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold disabled:opacity-50"
+            className="btn-firefly inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold disabled:opacity-50 shadow-md shadow-[#E8380D]/20"
           >
             <Plus className="h-4 w-4" />
             <span>{loading ? 'Creating Asset...' : 'Save Draft & Open Editor'}</span>

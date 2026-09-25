@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, use, useCallback } from 'react';
+import React, { useEffect, useState, use, useCallback } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -147,16 +147,16 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#eb1000] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#E8380D] border-t-transparent" />
       </div>
     );
   }
 
   if (!item) {
     return (
-      <div className="p-8 text-center text-slate-500">
+      <div className="p-8 text-center text-zinc-400">
         <p>Content item not found in AEM Lake.</p>
-        <Link href="/content" className="mt-2 text-[#ff4d6d] hover:underline font-mono text-xs">
+        <Link href="/content" className="mt-2 text-[#FFB347] hover:underline font-mono text-xs">
           Return to Library
         </Link>
       </div>
@@ -164,20 +164,20 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Top Header & Actions */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between pb-6 border-b border-white/[0.08]">
         <div>
           <div className="flex items-center gap-2">
             <Link
               href="/content"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-white transition"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-400 hover:text-white transition"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Content Library</span>
             </Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-xs font-mono text-slate-400">/{item.slug}</span>
+            <span className="text-zinc-600">/</span>
+            <span className="text-xs font-mono text-zinc-400">/{item.slug}</span>
           </div>
 
           <div className="mt-2 flex items-center gap-3">
@@ -191,7 +191,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
             >
               {item.status}
             </span>
-            <span className="text-xs font-mono text-slate-400">
+            <span className="text-xs font-mono text-zinc-400">
               v{item.currentVersion?.versionNo || 1}
             </span>
           </div>
@@ -201,16 +201,16 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
           <button
             onClick={handleRunAgent}
             disabled={runningAgent}
-            className="inline-flex items-center gap-2 rounded-xl bg-[#eb1000]/10 border border-[#eb1000]/30 px-3.5 py-2 text-xs font-semibold text-[#ff4d6d] shadow-sm hover:bg-[#eb1000]/20 transition disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#E8380D]/20 to-[#F56E40]/15 border border-[#E8380D]/30 px-3.5 py-2 text-xs font-semibold text-[#FFB347] shadow-sm hover:scale-[1.02] active:scale-[0.98] transition disabled:opacity-50"
           >
-            <Sparkles className="h-4 w-4 text-[#ff284d]" />
+            <Sparkles className="h-4 w-4 text-[#FFB347]" />
             <span>{runningAgent ? 'Running Agent Tools...' : 'Prep for Publish (AI)'}</span>
           </button>
 
           <button
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-slate-300 shadow-sm hover:bg-white/[0.08] hover:text-white transition disabled:opacity-50"
+            className="btn-secondary inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold disabled:opacity-50"
           >
             <Save className="h-4 w-4" />
             <span>{saving ? 'Saving...' : 'Save New Version'}</span>
@@ -219,7 +219,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
           <button
             onClick={handlePublish}
             disabled={publishing || item.status === 'PUBLISHED'}
-            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-emerald-600/30 hover:bg-emerald-500 transition disabled:opacity-50"
+            className="btn-firefly inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-[#E8380D]/20 disabled:opacity-50"
           >
             <UploadCloud className="h-4 w-4" />
             <span>{publishing ? 'Publishing...' : item.status === 'PUBLISHED' ? 'Published' : 'Publish to Edge'}</span>
@@ -230,10 +230,10 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
               href={`http://localhost:3002/content/${item.slug}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-slate-300 hover:bg-white/[0.08] hover:text-cyan-300 transition"
+              className="btn-secondary inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-zinc-300 hover:text-white"
             >
               <span>Live Preview</span>
-              <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
+              <ExternalLink className="h-3.5 w-3.5 text-zinc-400" />
             </a>
           )}
         </div>
@@ -258,18 +258,18 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
         <motion.section
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-[#eb1000]/30 specular-card p-6 space-y-4"
+          className="surface-card rounded-3xl border border-[#E8380D]/30 p-6 space-y-4 shadow-xl"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-4">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-xl bg-[#eb1000]/15 border border-[#eb1000]/30 text-[#ff4d6d] flex items-center justify-center">
+              <div className="h-9 w-9 rounded-xl bg-[#E8380D]/15 border border-[#E8380D]/30 text-[#FFB347] flex items-center justify-center">
                 <Bot className="h-5 w-5" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
                   Autonomous Agent Workflow • {agentRun.task.replace('_', ' ')}
                 </h3>
-                <p className="text-xs text-slate-400 font-mono mt-0.5">
+                <p className="text-xs text-zinc-400 font-mono mt-0.5">
                   Execution ID: {agentRun.id.slice(0, 8)} • Status:{' '}
                   <span className="font-semibold text-emerald-400 uppercase">{agentRun.status}</span>
                 </p>
@@ -277,8 +277,8 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-500/10 px-3 py-1 text-[11px] font-semibold text-cyan-300 border border-cyan-500/30">
-                <ShieldCheck className="h-3.5 w-3.5 text-cyan-400" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 px-3 py-1 text-[11px] font-semibold text-blue-300 border border-blue-500/30">
+                <ShieldCheck className="h-3.5 w-3.5 text-blue-400" />
                 <span>Human-in-the-Loop Safe</span>
               </span>
             </div>
@@ -291,23 +291,23 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
               return (
                 <div
                   key={step.stepIndex}
-                  className="rounded-xl border border-white/[0.08] bg-black/40 p-4 flex flex-col justify-between"
+                  className="rounded-2xl border border-white/[0.08] bg-black/40 p-4 flex flex-col justify-between"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-400">
+                      <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#FFB347]">
                         Step {step.stepIndex + 1}: {step.toolName.replace(/_/g, ' ')}
                       </span>
-                      <span className="text-[10px] text-slate-500 font-mono">{step.output.durationMs}ms</span>
+                      <span className="text-[10px] text-zinc-400 font-mono">{step.output.durationMs}ms</span>
                     </div>
 
                     {step.toolName === 'generate_meta_description' && data && (
                       <div className="space-y-2 text-xs">
-                        <span className="font-semibold text-slate-300">Generated Meta Description:</span>
-                        <div className="rounded-lg bg-white/[0.03] p-3 border border-white/[0.06] text-slate-300 italic text-[11px] leading-relaxed">
-                          "{String(data.metaDescription || '')}"
+                        <span className="font-semibold text-zinc-300">Generated Meta Description:</span>
+                        <div className="rounded-lg bg-white/[0.03] p-3 border border-white/[0.06] text-zinc-300 italic text-[11px] leading-relaxed">
+                          &quot;{String(data.metaDescription || '')}&quot;
                         </div>
-                        <div className="flex items-center justify-between text-[11px] text-slate-500">
+                        <div className="flex items-center justify-between text-[11px] text-zinc-400">
                           <span>{String(data.charCount || 0)} characters</span>
                           <button
                             onClick={() => {
@@ -315,7 +315,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                               setCopiedMeta(true);
                               setTimeout(() => setCopiedMeta(false), 2000);
                             }}
-                            className="text-[#ff4d6d] hover:text-white flex items-center gap-1 transition"
+                            className="text-[#FFB347] hover:text-white flex items-center gap-1 transition"
                           >
                             {copiedMeta ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                             <span>{copiedMeta ? 'Copied' : 'Copy'}</span>
@@ -327,7 +327,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                     {step.toolName === 'check_seo_score' && data && (
                       <div className="space-y-2 text-xs">
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold text-slate-300">SEO Health Index:</span>
+                          <span className="font-semibold text-zinc-300">SEO Health Index:</span>
                           <span className="text-sm font-extrabold text-emerald-400 font-mono">
                             {String(data.score)}% (Grade {String(data.grade)})
                           </span>
@@ -339,7 +339,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                                 key={idx}
                                 className="flex items-center justify-between text-[11px] py-1 border-b border-white/[0.04]"
                               >
-                                <span className="text-slate-400">{c.name}</span>
+                                <span className="text-zinc-400">{c.name}</span>
                                 <span
                                   className={`font-semibold flex items-center gap-1 ${
                                     c.pass ? 'text-emerald-400' : 'text-rose-400'
@@ -356,12 +356,12 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
 
                     {step.toolName === 'suggest_audience_segment' && data && (
                       <div className="space-y-2 text-xs">
-                        <span className="font-semibold text-slate-300">Target Audience Match:</span>
-                        <div className="rounded-lg bg-cyan-500/10 p-3 border border-cyan-500/20 space-y-1">
-                          <p className="font-bold text-cyan-300 font-mono text-xs">
+                        <span className="font-semibold text-zinc-300">Target Audience Match:</span>
+                        <div className="rounded-lg bg-blue-500/10 p-3 border border-blue-500/20 space-y-1">
+                          <p className="font-bold text-blue-300 font-mono text-xs">
                             {String(data.segmentName || '')}
                           </p>
-                          <p className="text-[11px] text-slate-400 leading-relaxed">
+                          <p className="text-[11px] text-zinc-400 leading-relaxed">
                             {String(data.reasoning || '')}
                           </p>
                         </div>
@@ -374,7 +374,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                       <CheckCircle2 className="h-3 w-3" />
                       <span>Verified Tool Output</span>
                     </span>
-                    <span className="text-slate-500 font-mono text-[10px]">HITL Approved</span>
+                    <span className="text-zinc-400 font-mono text-[10px]">HITL Approved</span>
                   </div>
                 </div>
               );
@@ -387,25 +387,25 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Editor Area (2 columns) */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="specular-card p-6 sm:p-8 rounded-2xl space-y-4">
+          <div className="surface-card p-6 sm:p-8 rounded-3xl space-y-4 border border-white/[0.08] shadow-xl">
             <div>
-              <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
+              <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400">
                 Asset Title
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="mt-1.5 block w-full rounded-xl border border-white/10 bg-[#0c0e14] px-4 py-2.5 text-sm text-white focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
+                className="input-dark mt-1.5 block w-full px-4 py-2.5 text-sm text-white"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between">
-                <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
+                <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400">
                   Body Content (Markdown / JSON)
                 </label>
-                <span className="text-[11px] text-slate-500 font-mono">
+                <span className="text-[11px] text-zinc-400 font-mono">
                   {bodyText.length} characters • ~{Math.round(bodyText.length / 4)} tokens
                 </span>
               </div>
@@ -413,7 +413,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                 rows={18}
                 value={bodyText}
                 onChange={(e) => setBodyText(e.target.value)}
-                className="mt-1.5 block w-full font-mono text-xs rounded-xl border border-white/10 bg-[#0c0e14] p-4 text-slate-200 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none leading-relaxed transition resize-y"
+                className="input-dark mt-1.5 block w-full font-mono text-xs p-4 text-zinc-200 leading-relaxed resize-y"
               />
             </div>
           </div>
@@ -421,14 +421,14 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
 
         {/* Version History & Telemetry Sidebar (1 column) */}
         <div className="space-y-6">
-          <div className="specular-card p-6 rounded-2xl space-y-4">
+          <div className="surface-card p-6 rounded-3xl space-y-4 border border-white/[0.08] shadow-xl">
             <div className="flex items-center gap-2">
-              <History className="h-4 w-4 text-[#ff4d6d]" />
+              <History className="h-4 w-4 text-[#FFB347]" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-white font-mono">
                 Version History
               </h2>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-zinc-400">
               Immutable content snapshots recorded for auditability and diff rollback.
             </p>
 
@@ -437,7 +437,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                 <div key={v.id} className="py-3 flex items-center justify-between text-xs">
                   <div>
                     <span className="font-semibold text-white font-mono">Snapshot v{v.versionNo}</span>
-                    <p className="text-slate-500 text-[11px] mt-0.5 font-mono">
+                    <p className="text-zinc-400 text-[11px] mt-0.5 font-mono">
                       {new Date(v.createdAt).toLocaleDateString(undefined, {
                         month: 'short',
                         day: 'numeric',
@@ -447,7 +447,7 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                     </p>
                   </div>
                   {v.versionNo === item.currentVersion?.versionNo && (
-                    <span className="rounded-full bg-[#eb1000]/15 border border-[#eb1000]/30 px-2 py-0.5 text-[10px] font-mono font-semibold text-[#ff4d6d]">
+                    <span className="rounded-full bg-[#E8380D]/15 border border-[#E8380D]/30 px-2 py-0.5 text-[10px] font-mono font-semibold text-[#FFB347]">
                       Active
                     </span>
                   )}
@@ -456,12 +456,12 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
 
-          <div className="specular-card p-6 rounded-2xl text-xs text-slate-400 space-y-2.5">
+          <div className="surface-card p-6 rounded-3xl text-xs text-zinc-400 space-y-2.5 border border-white/[0.08] shadow-xl">
             <div className="font-semibold text-white flex items-center gap-2 font-mono text-xs">
-              <Cpu className="h-4 w-4 text-cyan-400" />
+              <Cpu className="h-4 w-4 text-blue-400" />
               <span>Automated RAG Vector Indexing</span>
             </div>
-            <p className="text-slate-400 leading-relaxed text-[11px]">
+            <p className="text-zinc-400 leading-relaxed text-[11px]">
               Upon edge publication, this document is chunked and embedded via HuggingFace BGE into 384-dimensional dense vectors stored in Neon PostgreSQL with pgvector cosine distance indexing.
             </p>
           </div>

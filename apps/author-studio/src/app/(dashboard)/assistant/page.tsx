@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   Sparkles,
@@ -66,7 +66,7 @@ export default function AssistantPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+          Authorization: `Bearer ${localStorage.getItem('cp_token') || ''}`,
         },
         body: JSON.stringify({ question }),
       });
@@ -159,32 +159,32 @@ export default function AssistantPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6 pb-12">
       {/* Top Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-6 border-b border-white/[0.08]">
         <div>
           <div className="flex items-center gap-2">
-            <span className="rounded-lg bg-[#eb1000]/15 px-2.5 py-0.5 text-[10px] font-mono font-bold text-[#ff4d6d] border border-[#eb1000]/30">
+            <span className="rounded-md bg-[#E8380D]/15 px-2.5 py-0.5 text-[10px] font-mono font-bold text-[#FFB347] border border-[#E8380D]/30">
               ADOBE SENSEI GENAI
             </span>
-            <span className="text-xs text-slate-500 font-mono">RAG RETRIEVAL ENGINE</span>
+            <span className="text-xs text-zinc-400 font-mono">• RAG RETRIEVAL ENGINE</span>
           </div>
           <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             RAG Copilot & Vector Laboratory
           </h1>
-          <p className="mt-1 text-xs sm:text-sm text-slate-400">
+          <p className="mt-1 text-xs sm:text-sm text-zinc-400">
             Ground-truth conversational assistant powered by pgvector 384-dim embeddings & Groq Llama-3.3-70B.
           </p>
         </div>
 
         {/* Tab Switcher */}
-        <div className="inline-flex rounded-xl specular-card p-1 border border-white/10">
+        <div className="inline-flex rounded-xl surface-card p-1 border border-white/10">
           <button
             onClick={() => setActiveTab('chat')}
             className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition ${
               activeTab === 'chat'
-                ? 'btn-adobe-primary'
-                : 'text-slate-400 hover:text-white'
+                ? 'btn-firefly'
+                : 'text-zinc-400 hover:text-white'
             }`}
           >
             <Sparkles className="h-3.5 w-3.5" />
@@ -194,8 +194,8 @@ export default function AssistantPage() {
             onClick={() => setActiveTab('search')}
             className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition ${
               activeTab === 'search'
-                ? 'btn-adobe-primary'
-                : 'text-slate-400 hover:text-white'
+                ? 'btn-firefly'
+                : 'text-zinc-400 hover:text-white'
             }`}
           >
             <Search className="h-3.5 w-3.5" />
@@ -206,39 +206,60 @@ export default function AssistantPage() {
 
       {/* Tab 1: Streaming RAG Chat */}
       {activeTab === 'chat' && (
-        <div className="specular-card rounded-2xl flex flex-col h-[650px] overflow-hidden border border-white/[0.08]">
+        <div className="surface-card rounded-3xl flex flex-col h-[680px] overflow-hidden border border-white/[0.08] shadow-2xl">
           {/* Chat Messages Log */}
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-8">
-                <div className="h-12 w-12 rounded-2xl bg-[#eb1000]/10 border border-[#eb1000]/30 text-[#ff4d6d] flex items-center justify-center mb-4">
+                <div className="h-12 w-12 rounded-2xl bg-[#E8380D]/10 border border-[#E8380D]/30 text-[#FFB347] flex items-center justify-center mb-4 shadow-lg shadow-[#E8380D]/5">
                   <Bot className="h-6 w-6" />
                 </div>
-                <h3 className="text-base font-bold text-white">
+                <h3 className="text-lg font-bold text-white">
                   ContentPilot RAG Knowledge Assistant
                 </h3>
-                <p className="text-xs text-slate-400 max-w-sm mt-1 mb-6">
+                <p className="text-xs text-zinc-400 max-w-sm mt-1 mb-6">
                   Answers are strictly grounded in your published AEM content with verified source citations.
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-w-lg w-full text-left text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg w-full text-left text-xs">
                   <button
                     onClick={() => sendMessage('What content articles do we currently have published in the CMS?')}
-                    className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-[#eb1000]/40 transition text-slate-300 group"
+                    className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-[#E8380D]/40 transition text-zinc-300 group"
                   >
-                    <p className="font-semibold text-white group-hover:text-cyan-300 transition">
+                    <p className="font-semibold text-white group-hover:text-[#FFB347] transition">
                       "What content do we have published?"
                     </p>
-                    <p className="text-[11px] text-slate-500 mt-1">Queries pgvector index for all published articles</p>
+                    <p className="text-[11px] text-zinc-400 mt-1">Queries pgvector index for all published articles</p>
                   </button>
+
                   <button
                     onClick={() => sendMessage('How do we configure audience segments for personalization?')}
-                    className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-[#eb1000]/40 transition text-slate-300 group"
+                    className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-[#E8380D]/40 transition text-zinc-300 group"
                   >
-                    <p className="font-semibold text-white group-hover:text-cyan-300 transition">
+                    <p className="font-semibold text-white group-hover:text-[#FFB347] transition">
                       "How does personalization work?"
                     </p>
-                    <p className="text-[11px] text-slate-500 mt-1">Retrieves Adobe Target rule evaluation docs</p>
+                    <p className="text-[11px] text-zinc-400 mt-1">Retrieves Adobe Target rule evaluation docs</p>
+                  </button>
+
+                  <button
+                    onClick={() => sendMessage('Explain the Human-in-the-Loop agent workflow for publishing.')}
+                    className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-[#E8380D]/40 transition text-zinc-300 group"
+                  >
+                    <p className="font-semibold text-white group-hover:text-[#FFB347] transition">
+                      "How does HITL governance work?"
+                    </p>
+                    <p className="text-[11px] text-zinc-400 mt-1">Reviews safety rules & tool approval gate</p>
+                  </button>
+
+                  <button
+                    onClick={() => sendMessage('What are our edge delivery latency guarantees?')}
+                    className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-[#E8380D]/40 transition text-zinc-300 group"
+                  >
+                    <p className="font-semibold text-white group-hover:text-[#FFB347] transition">
+                      "What is our Edge Delivery SLA?"
+                    </p>
+                    <p className="text-[11px] text-zinc-400 mt-1">Checks sub-15ms edge resolution benchmarks</p>
                   </button>
                 </div>
               </div>
@@ -248,15 +269,15 @@ export default function AssistantPage() {
                   key={msg.id}
                   className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                 >
-                  <div className="flex items-center gap-2 mb-1 text-[11px] font-mono text-slate-500">
+                  <div className="flex items-center gap-2 mb-1 text-[11px] font-mono text-zinc-400">
                     {msg.role === 'user' ? (
                       <>
-                        <span>Author Studio</span>
-                        <User className="h-3 w-3 text-slate-400" />
+                        <span>Lead Architect</span>
+                        <User className="h-3 w-3 text-zinc-400" />
                       </>
                     ) : (
                       <>
-                        <Bot className="h-3 w-3 text-[#ff4d6d]" />
+                        <Bot className="h-3 w-3 text-[#FFB347]" />
                         <span>Sensei AI • Grounded Response</span>
                       </>
                     )}
@@ -265,8 +286,8 @@ export default function AssistantPage() {
                   <div
                     className={`max-w-2xl rounded-2xl px-5 py-3.5 text-xs leading-relaxed ${
                       msg.role === 'user'
-                        ? 'bg-gradient-to-r from-[#eb1000] to-[#fa383e] text-white rounded-br-none shadow-md shadow-[#eb1000]/20'
-                        : 'specular-card text-slate-200 rounded-bl-none border border-white/10'
+                        ? 'btn-firefly text-white rounded-br-none shadow-md shadow-[#E8380D]/20'
+                        : 'surface-elevated text-zinc-200 rounded-bl-none border border-white/10 shadow-lg'
                     }`}
                   >
                     <p className="whitespace-pre-wrap">{msg.content || (isStreaming ? 'Synthesizing response from pgvector context...' : '')}</p>
@@ -275,17 +296,17 @@ export default function AssistantPage() {
                   {/* Source Citations */}
                   {msg.sources && msg.sources.length > 0 && (
                     <div className="mt-3 flex flex-wrap items-center gap-2">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 self-center">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 self-center">
                         Verified Sources:
                       </span>
                       {msg.sources.map((s, idx) => (
                         <Link
                           key={idx}
                           href={`/content/${s.contentId}`}
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-cyan-500/10 px-2.5 py-1 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 border border-cyan-500/30 transition"
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-300 hover:bg-blue-500/20 border border-blue-500/30 transition"
                           title={`Cosine Similarity: ${Math.round(s.similarity * 100)}%`}
                         >
-                          <FileText className="h-3 w-3 text-cyan-400" />
+                          <FileText className="h-3 w-3 text-blue-400" />
                           <span>{s.title}</span>
                           <span className="text-[10px] text-emerald-400 font-mono">
                             {Math.round(s.similarity * 100)}%
@@ -315,12 +336,12 @@ export default function AssistantPage() {
                 onChange={(e) => setInputQuestion(e.target.value)}
                 placeholder="Ask anything about your published CMS content..."
                 disabled={isStreaming}
-                className="flex-1 rounded-xl border border-white/10 bg-[#0c0e14] px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
+                className="input-dark flex-1 px-4 py-2.5 text-xs text-white placeholder-zinc-500"
               />
               <button
                 type="submit"
                 disabled={isStreaming || !inputQuestion.trim()}
-                className="btn-adobe-primary inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-semibold disabled:opacity-50"
+                className="btn-firefly inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-semibold disabled:opacity-50"
               >
                 <Send className="h-3.5 w-3.5" />
                 <span>{isStreaming ? 'Streaming...' : 'Ask Copilot'}</span>
@@ -330,7 +351,7 @@ export default function AssistantPage() {
                   type="button"
                   onClick={clearMessages}
                   title="Clear conversation"
-                  className="rounded-xl border border-white/10 px-3 py-2.5 text-xs text-slate-400 hover:bg-white/[0.05] hover:text-white transition"
+                  className="rounded-xl border border-white/10 px-3 py-2.5 text-xs text-zinc-400 hover:bg-white/[0.05] hover:text-white transition"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -343,8 +364,8 @@ export default function AssistantPage() {
       {/* Tab 2: Semantic Vector Search */}
       {activeTab === 'search' && (
         <div className="space-y-6">
-          <form onSubmit={handleSearch} className="specular-card p-6 rounded-2xl space-y-4">
-            <label className="block text-xs font-mono uppercase tracking-wider text-slate-400">
+          <form onSubmit={handleSearch} className="surface-card p-6 rounded-2xl space-y-4 border border-white/[0.08]">
+            <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400">
               Natural Language Semantic Vector Query
             </label>
             <div className="flex gap-3">
@@ -353,20 +374,20 @@ export default function AssistantPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="e.g., How does personalized delivery evaluate audience rules?"
-                className="flex-1 rounded-xl border border-white/10 bg-[#0c0e14] px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-[#eb1000] focus:ring-1 focus:ring-[#eb1000]/40 focus:outline-none transition"
+                className="input-dark flex-1 px-4 py-2.5 text-xs text-white placeholder-zinc-500"
               />
               <button
                 type="submit"
                 disabled={isSearching || !searchQuery.trim()}
-                className="btn-adobe-primary inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs font-semibold disabled:opacity-50"
+                className="btn-firefly inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs font-semibold disabled:opacity-50"
               >
                 <Search className="h-4 w-4" />
                 <span>{isSearching ? 'Embedding & Querying...' : 'Cosine Search'}</span>
               </button>
             </div>
-            <p className="text-[11px] text-slate-500 font-mono">
+            <p className="text-[11px] text-zinc-400 font-mono">
               Transforms query into 384-dim dense embedding and calculates vector distance via{' '}
-              <code className="text-cyan-400">&lt;=&gt;</code> cosine distance operator in pgvector.
+              <code className="text-[#FFB347]">&lt;=&gt;</code> cosine distance operator in pgvector.
             </p>
           </form>
 
@@ -379,7 +400,7 @@ export default function AssistantPage() {
           {searchResults.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
+                <h2 className="text-xs font-mono uppercase tracking-wider text-zinc-400 font-semibold">
                   Ranked Vector Chunks ({searchResults.length} matches)
                 </h2>
                 <span className="text-[11px] font-mono text-emerald-400">
@@ -391,32 +412,40 @@ export default function AssistantPage() {
                 {searchResults.map((chunk) => (
                   <div
                     key={chunk.id}
-                    className="specular-card specular-card-hover p-5 rounded-2xl space-y-3"
+                    className="surface-card card-interactive p-5 rounded-2xl space-y-3 border border-white/[0.08]"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/content/${chunk.contentItemId}`}
-                          className="font-bold text-white hover:text-cyan-300 transition text-sm"
+                          className="font-bold text-white hover:text-[#FFB347] transition text-sm"
                         >
                           {chunk.title}
                         </Link>
-                        <span className="text-[11px] font-mono text-slate-500">/{chunk.slug}</span>
+                        <span className="text-[11px] font-mono text-zinc-400">/{chunk.slug}</span>
                       </div>
                       <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-xs font-mono font-semibold text-emerald-400">
                         {Math.round(chunk.similarity * 100)}% match
                       </span>
                     </div>
 
-                    <p className="text-xs leading-relaxed text-slate-300 font-mono bg-black/40 p-3.5 rounded-xl border border-white/[0.04]">
+                    <p className="text-xs leading-relaxed text-zinc-300 font-mono bg-black/40 p-3.5 rounded-xl border border-white/[0.04]">
                       {chunk.chunkText}
                     </p>
 
-                    <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                    {/* Similarity Bar */}
+                    <div className="w-full bg-white/[0.04] h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="bg-gradient-to-r from-[#E8380D] to-[#FFB347] h-full rounded-full"
+                        style={{ width: `${Math.round(chunk.similarity * 100)}%` }}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-zinc-400 font-mono pt-1">
                       <span>Chunk Sequence #{chunk.chunkIndex}</span>
                       <Link
                         href={`/content/${chunk.contentItemId}`}
-                        className="text-[#ff4d6d] hover:text-cyan-300 flex items-center gap-1 font-semibold transition"
+                        className="text-[#FFB347] hover:text-white flex items-center gap-1 font-semibold transition"
                       >
                         <span>Open Document in Editor</span>
                         <ArrowRight className="h-3 w-3" />
