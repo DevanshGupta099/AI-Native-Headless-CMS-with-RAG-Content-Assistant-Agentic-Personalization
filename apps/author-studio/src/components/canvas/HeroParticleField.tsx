@@ -140,15 +140,13 @@ export default function HeroParticleField() {
       renderer.setSize(width, height);
     };
 
-    window.addEventListener('resize', handleResize);
-
     // Animation Loop
-    let clock = new THREE.Clock();
+    const startTime = performance.now();
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
 
-      const elapsed = clock.getElapsedTime();
+      const elapsed = (performance.now() - startTime) * 0.001;
       mouseX += (targetMouseX - mouseX) * 0.05;
       mouseY += (targetMouseY - mouseY) * 0.05;
 

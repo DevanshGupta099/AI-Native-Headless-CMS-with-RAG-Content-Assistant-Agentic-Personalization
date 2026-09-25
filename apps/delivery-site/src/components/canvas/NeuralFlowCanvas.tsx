@@ -115,12 +115,10 @@ export default function NeuralFlowCanvas() {
       renderer.setSize(width, height);
     };
 
-    window.addEventListener('resize', handleResize);
-
-    let clock = new THREE.Clock();
+    const startTime = performance.now();
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      const time = clock.getElapsedTime() * 1.4;
+      const time = (performance.now() - startTime) * 0.001 * 1.4;
 
       const positionAttr = geometry.getAttribute('position') as THREE.BufferAttribute | undefined;
       if (positionAttr) {
