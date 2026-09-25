@@ -430,10 +430,12 @@ export default function ContentEditorPage({ params }: { params: Promise<{ id: st
                 onAiAssistedEdit={async (prompt, currentContent) => {
                   try {
                     const res = await api.post<{ data?: { answer?: string }; reply?: string; message?: string }>('/api/assistant/chat', {
-                      message: `Improve or revise the following block based on instruction: "${prompt}".\n\nContent:\n${currentContent}\n\nReturn ONLY the revised block text without preamble.`,
+                      question: `Improve or revise the following content block based on this instruction: "${prompt}".\n\nOriginal Content:\n${currentContent}\n\nReturn ONLY the revised block content without any conversational filler or Markdown block wrapper.`,
+                      stream: false,
                     });
-                    return res.reply || res.data?.answer || res.message || currentContent;
-                  } catch {
+                    return res.data?.answer || res.reply || res.message || currentContent;
+                  } catch (err) {
+                    console.error('AI assistant block edit failed:', err);
                     return currentContent;
                   }
                 }}

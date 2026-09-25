@@ -12,11 +12,26 @@ export const ChatMessageSchema = z.object({
   content: z.string().min(1),
 });
 
-export const ChatRequestSchema = z.object({
-  question: z.string().min(1, 'Question cannot be empty'),
-  history: z.array(ChatMessageSchema).optional().default([]),
-  stream: z.boolean().default(true),
-});
+export const ChatRequestSchema = z
+  .object({
+    question: z.string().optional(),
+    message: z.string().optional(),
+    history: z.array(ChatMessageSchema).optional().default([]),
+    stream: z.boolean().default(true),
+  })
+  .transform((data) => {
+    const q = (data.question || data.message || '').trim();
+    return {
+      question: q,
+      message: q,
+      history: data.history ?? [],
+      stream: data.stream ?? true,
+    };
+  })
+  .refine((data) => data.question.length > 0, {
+    message: 'Question cannot be empty',
+    path: ['question'],
+  });
 export type ChatRequestInput = z.infer<typeof ChatRequestSchema>;
 
 export const AgentExecuteSchema = z.object({
